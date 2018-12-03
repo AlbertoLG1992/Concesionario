@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigationCochesNuevos"
+        android:icon="@drawable/ic_coche_nuevo"
+        android:title="Coches Nuevos" />
+
+    <item
+        android:id="@+id/navigationCochesUsados"
+        android:icon="@drawable/ic_coche_usado"
+        android:title="Coches Usados" />
+
+    <item
+        android:id="@+id/navigationExtras"
+        android:icon="@drawable/ic_extras"
+        android:title="Extras" />
+
+</menu>

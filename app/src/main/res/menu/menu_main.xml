@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemCochesNuevos"
+        android:title="Coche Nuevo" />
+    <item
+        android:id="@+id/itemCochesUsados"
+        android:title="Coches Usados" />
+    <item
+        android:id="@+id/itemExtras"
+        android:title="Extras" />
+</menu>
