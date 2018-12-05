@@ -50,36 +50,41 @@ public class TablaCoches {
         }
     }
 
-    /**  **/
-    public ArrayList<Coche> todosLosCoches(){
+    /**
+     * Devuelve un arrayList con todos los coches nuevos o usados de la base de datos,
+     * los nuevos con true y los usados con false
+     *
+     * @param esNuevo :boolean
+     * @return ArrayList<Coche>
+     */
+    public ArrayList<Coche> todosLosCoches(boolean esNuevo){
         ArrayList<Coche> listaCoches = new ArrayList<Coche>();
         Cursor c;
+        int nuevoUsado = esNuevo? 1 : 0;
 
         /* Se abre la base de datos y se extrae en el cursor todos los coches existentes */
         this.openDatabaseRead();
-        c = this.database.rawQuery("SELECT * FROM coches", null);
+        c = this.database.rawQuery("SELECT * FROM coches WHERE es_nuevo = " + nuevoUsado, null);
 
+        /* Se compueba que la consulta no esta vacía */
         if (c.moveToFirst()){
             do {
-                /* Se extraen todos los datos */
-                int id = c.getInt(0);
-                String marca = c.getString(1);
-                String modelo = c.getString(2);
-                int precio = c.getInt(3);
-                String descrip = c.getString(4);
-                //byte[] blob = c.getBlob(5);
-                //ByteArrayInputStream byteIn = new ByteArrayInputStream(blob);
-                //Bitmap foto = BitmapFactory.decodeStream(byteIn);
-                Bitmap foto = BitmapFactory.decodeStream(new ByteArrayInputStream(c.getBlob(5)));
-                int esNuevoInt = c.getInt(6);
-                boolean esNuevoBool;
-
-                if (esNuevoInt == 1){
-                    esNuevoBool = true;
-                }else {
-                    esNuevoBool = false;
-                }
-                listaCoches.add(new Coche(id, marca, modelo, precio, descrip, foto, esNuevoBool));
+                /* Para extraer un blob es necesario pasarlo a un array de byte y después crear un
+                 * ByteArrayInputStream en el cual lo metemos mediante el constructor para despues
+                 * pasarlo a Bitmap mediante BitmapFactory.decodeStream()
+                    * byte[] blob = c.getBlob(5);
+                    * ByteArrayInputStream byteIn = new ByteArrayInputStream(blob);
+                    * Bitmap foto = BitmapFactory.decodeStream(byteIn);
+                 * o de manera abreviada:
+                    * Bitmap  foto = BitmapFactory.decodeStream(new ByteArrayInputStream(c.getBlob(5)));
+                 *
+                 * Dado que SQLite no posee boolean, se extrae un entero y se guarda true o false
+                 * mediante un operador ternario:
+                    * boolean esNuevoBool = c.getInt(6) == 1?  true :  false; */
+                listaCoches.add(new Coche(c.getInt(0), c.getString(1),
+                        c.getString(2), c.getInt(3), c.getString(4),
+                        BitmapFactory.decodeStream(new ByteArrayInputStream(c.getBlob(5))),
+                        c.getInt(6) == 1?  true :  false));
             }while (c.moveToNext());
         }
 

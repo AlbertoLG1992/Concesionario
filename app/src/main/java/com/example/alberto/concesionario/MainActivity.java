@@ -11,11 +11,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.alberto.concesionario.Adaptadores.AdapterCochesNuevos;
-import com.example.alberto.concesionario.BaseDeDatos.Coches.Coche;
-import com.example.alberto.concesionario.BaseDeDatos.Coches.TablaCoches;
-
-import java.util.ArrayList;
+import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -30,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
      * señale como item actual y en onPrepareOptionsMenu se pueda activar o desactivar
      * item del menu en señal del actual */
     private String navigationActual = "";
-    private ArrayList<Coche> listaCochesNuevos;
+    AdapterCoches adapterCoches;
 
 
     @Override
@@ -63,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.navigationCochesUsados:{
                 this.navigationActual = "Coche Usados";
                 this.textView.setText(navigationActual);
+                this.cargarAdaptadorCochesUsados();
                 return true;
             }
             case R.id.navigationExtras:{
@@ -75,13 +72,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     /**
+     * Carga el adaptador de coches usados
+     */
+    public void cargarAdaptadorCochesUsados() {
+        this.adapterCoches = new AdapterCoches(this, getApplicationContext(), false);
+        this.listViewMain.setAdapter(adapterCoches);
+    }
+
+    /**
      * Carga el adaptador de coches nuevos
      */
     public void cargarAdaptadorCochesNuevos(){
-        TablaCoches tablaCoches = new TablaCoches(getApplicationContext());
-        this.listaCochesNuevos = tablaCoches.todosLosCoches();
-        AdapterCochesNuevos adapterCochesNuevos = new AdapterCochesNuevos(this, this.listaCochesNuevos);
-        this.listViewMain.setAdapter(adapterCochesNuevos);
+        this.adapterCoches = new AdapterCoches(this, getApplicationContext(), true);
+        this.listViewMain.setAdapter(adapterCoches);
 
     }
 
