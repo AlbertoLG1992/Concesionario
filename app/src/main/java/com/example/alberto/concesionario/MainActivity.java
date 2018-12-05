@@ -3,6 +3,7 @@ package com.example.alberto.concesionario;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private Toolbar toolbar;
     private TextView textView;
     private ListView listViewMain;
+    private FloatingActionButton floatBtn;
 
     /** VARIABLES **/
     /* navigationActual sirve para que cuando se pulsa un item de onNavigationItemSelected se
@@ -74,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
+    /**
+     * Carga el adaptador de Extras
+     */
     public void cargarAdaptadorExtras() {
         this.adapterExtra = new AdapterExtra(this, getApplicationContext());
         this.listViewMain.setAdapter(this.adapterExtra);
@@ -188,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         this.toolbar = (Toolbar)findViewById(R.id.toolbarMain);
         this.textView = (TextView) findViewById(R.id.textView);
         this.listViewMain = (ListView) findViewById(R.id.listViewMain);
+        this.floatBtn = (FloatingActionButton) findViewById(R.id.floatBtnMain);
 
         /* CLICKABLES */
         this.navigationMenu.setOnNavigationItemSelectedListener(this);
