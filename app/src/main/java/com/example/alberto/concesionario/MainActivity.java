@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
+import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
      * item del menu en señal del actual */
     private String navigationActual = "";
     AdapterCoches adapterCoches;
+    AdapterExtra adapterExtra;
 
 
     @Override
@@ -65,10 +67,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.navigationExtras:{
                 this.navigationActual = "Extras";
                 this.textView.setText(navigationActual);
+                this.cargarAdaptadorExtras();
                 return true;
             }
         }
         return false;
+    }
+
+    public void cargarAdaptadorExtras() {
+        this.adapterExtra = new AdapterExtra(this, getApplicationContext());
+        this.listViewMain.setAdapter(this.adapterExtra);
     }
 
     /**
@@ -76,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
      */
     public void cargarAdaptadorCochesUsados() {
         this.adapterCoches = new AdapterCoches(this, getApplicationContext(), false);
-        this.listViewMain.setAdapter(adapterCoches);
+        this.listViewMain.setAdapter(this.adapterCoches);
     }
 
     /**

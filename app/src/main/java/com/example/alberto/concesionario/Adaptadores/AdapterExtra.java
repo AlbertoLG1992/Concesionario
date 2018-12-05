@@ -6,33 +6,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.alberto.concesionario.BaseDeDatos.Coches.Coche;
-import com.example.alberto.concesionario.BaseDeDatos.Coches.TablaCoches;
+import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
+import com.example.alberto.concesionario.BaseDeDatos.Extras.TablaExtras;
 import com.example.alberto.concesionario.R;
 
 import java.util.ArrayList;
 
-public class AdapterCoches extends BaseAdapter {
+public class AdapterExtra extends BaseAdapter {
 
     protected Activity activity;
-    protected ArrayList<Coche> items;
+    protected ArrayList<Extra> items;
 
     /**
-     * Constructor de clase, mediante un booleano se sabrá si se carga coches nuevos(true) o
-     * coches usados(false)
+     * Constructor de clase
      *
      * @param activity :Activity
      * @param context :Context
-     * @param esNuevo :Boolean
      */
-    public AdapterCoches(Activity activity, Context context, boolean esNuevo){
-        /* En el mismo constructor se hace la consulta a la base de datos y
-         * se carga en el ArrayList */
-        TablaCoches tablaCoches = new TablaCoches(context);
-        this.items = tablaCoches.todosLosCoches(esNuevo);
+    public AdapterExtra(Activity activity, Context context) {
+        TablaExtras tablaExtras = new TablaExtras(context);
+        this.items = tablaExtras.todosLosExtras();
         this.activity = activity;
     }
 
@@ -65,7 +60,7 @@ public class AdapterCoches extends BaseAdapter {
      */
     @Override
     public long getItemId(int position) {
-        return this.items.get(position).getIdCoche();
+        return this.items.get(position).getId();
     }
 
     /**
@@ -83,20 +78,20 @@ public class AdapterCoches extends BaseAdapter {
         View v = convertView;
         if (convertView == null){
             LayoutInflater infla = (LayoutInflater)this.activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = infla.inflate(R.layout.adapter_coches, null);
+            v = infla.inflate(R.layout.adapter_extras, null);
         }
 
         /* Se extrae el item especifico que toca cargar y se añade a los objetos del XML */
-        Coche coche = items.get(position);
+        Extra extra = items.get(position);
 
-        TextView txvMarcaCocheNuevoLista = (TextView)v.findViewById(R.id.txvMarcaCocheNuevoLista);
-        txvMarcaCocheNuevoLista.setText(coche.getMarca());
+        TextView txvNombreExtraLista = (TextView)v.findViewById(R.id.txvNombreExtraLista);
+        txvNombreExtraLista.setText(extra.getNombre());
 
-        TextView txvModeloCocheNuevoLista = (TextView)v.findViewById(R.id.txvModeloCocheNuevoLista);
-        txvModeloCocheNuevoLista.setText(coche.getModelo());
+        TextView txvDescripExtraLista = (TextView)v.findViewById(R.id.txvDescripExtraLista);
+        txvDescripExtraLista.setText(extra.getDescripcion());
 
-        ImageView imgCocheNuevoLista = (ImageView)v.findViewById(R.id.imgListCocheNuevoLista);
-        imgCocheNuevoLista.setImageBitmap(coche.getFoto());
+        TextView txvPrecioExtraLista = (TextView)v.findViewById(R.id.txvPrecioExtraLista);
+        txvPrecioExtraLista.setText(String.valueOf(extra.getPrecio()) + "€");
 
         return v;
     }
