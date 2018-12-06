@@ -1,14 +1,17 @@
 package com.example.alberto.concesionario;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,6 +46,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         /* Para que comience en Coche Nuevos */
         this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
+
+        /* Listener de FloatingActionButton */
+        this.floatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (navigationActual){
+                    case "Coches Nuevos":{
+                        /* Se habre la actividad de AddCochesNuevosActivity */
+                        Intent intent = new Intent(getApplicationContext(), AddCochesNuevosActivity.class);
+                        startActivityForResult(intent, 1);
+                        break;
+                    }
+                    case "Coches Usados":{
+
+                        break;
+                    }
+                    case "Extras":{
+                        Snackbar.make(view, "Here's a Snackbar in Extras", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -55,13 +82,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()){
             case R.id.navigationCochesNuevos:{
-                this.navigationActual = "Coche Nuevos";
+                this.navigationActual = "Coches Nuevos";
                 this.textView.setText(navigationActual);
                 this.cargarAdaptadorCochesNuevos();
                 return true;
             }
             case R.id.navigationCochesUsados:{
-                this.navigationActual = "Coche Usados";
+                this.navigationActual = "Coches Usados";
                 this.textView.setText(navigationActual);
                 this.cargarAdaptadorCochesUsados();
                 return true;
@@ -110,14 +137,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
         /* Item Coche Nuevos */
-        if (this.navigationActual.equals("Coche Nuevos")){
+        if (this.navigationActual.equals("Coches Nuevos")){
             menu.findItem(R.id.itemCochesNuevos).setEnabled(false);
         }else {
             menu.findItem(R.id.itemCochesNuevos).setEnabled(true);
         }
 
         /* Item Coche Usados */
-        if (this.navigationActual.equals("Coche Usados")){
+        if (this.navigationActual.equals("Coches Usados")){
             menu.findItem(R.id.itemCochesUsados).setEnabled(false);
         }else {
             menu.findItem(R.id.itemCochesUsados).setEnabled(true);

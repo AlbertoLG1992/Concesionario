@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemGuardarAddCocheNuevo"
+        android:icon="@drawable/ic_add_coche"
+        android:title="Guardar"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemReestAddCocheNuevo"
+        android:icon="@drawable/ic_cancel_coche"
+        android:title="Reestablecer"
+        android:visible="true"
+        app:showAsAction="always" />
+</menu>

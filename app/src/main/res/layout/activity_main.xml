@@ -23,6 +23,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/navigation"
             android:layout_below="@+id/toolbarMain"
+            android:layout_marginTop="0dp"
             android:orientation="vertical">
 
             <TextView
