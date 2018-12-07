@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesNuevosActivity;
 import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
 import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
 
@@ -32,8 +33,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
      * señale como item actual y en onPrepareOptionsMenu se pueda activar o desactivar
      * item del menu en señal del actual */
     private String navigationActual = "";
-    AdapterCoches adapterCoches;
-    AdapterExtra adapterExtra;
+    private AdapterCoches adapterCoches;
+    private AdapterExtra adapterExtra;
+
+    /* Variables para las ActivitiesForResult */
+    static final int REQUEST_ADD_COCHE_NUEVO = 1;
+    static final int REQUEST_ADD_COCHE_USADO = 2;
+    static final int REQUEST_ADD_EXTRA = 2;
 
 
     @Override
@@ -55,21 +61,33 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     case "Coches Nuevos":{
                         /* Se habre la actividad de AddCochesNuevosActivity */
                         Intent intent = new Intent(getApplicationContext(), AddCochesNuevosActivity.class);
-                        startActivityForResult(intent, 1);
+                        startActivityForResult(intent, REQUEST_ADD_COCHE_NUEVO);
                         break;
                     }
                     case "Coches Usados":{
-
+                        //TODO ACTIVITY ADD COCHES USADOS
                         break;
                     }
                     case "Extras":{
-                        Snackbar.make(view, "Here's a Snackbar in Extras", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+                        //TODO DIALOG NUEVO EXTRA
                         break;
                     }
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((requestCode == REQUEST_ADD_COCHE_NUEVO) && (resultCode == RESULT_OK)){
+            this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
+        }
+        if ((requestCode == REQUEST_ADD_COCHE_USADO) && (resultCode == RESULT_OK)){
+
+        }
+        if ((requestCode == REQUEST_ADD_EXTRA) && (resultCode == RESULT_OK)){
+
+        }
     }
 
     /**

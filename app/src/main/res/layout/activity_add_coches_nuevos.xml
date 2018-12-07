@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddCochesNuevosActivity">
+    tools:context=".Activities.AddElementosDatabase.AddCochesNuevosActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,23 +23,38 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbarAddCoches"
-            android:layout_marginTop="0dp">
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
                 android:orientation="vertical">
 
-                <ImageButton
-                    android:id="@+id/imageButtonAddCocheNuevo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_add_a_photo" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/imgBtnAddCocheNuevoFoto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_add_a_photo" />
+
+                    <ImageButton
+                        android:id="@+id/imgBtnAddCocheNuevoGaleria"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_galeria" />
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/imgvAddCochesNuevos"
@@ -64,7 +79,7 @@
                             android:textSize="20sp" />
 
                         <EditText
-                            android:id="@+id/editText"
+                            android:id="@+id/edtMarcaNuevo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
@@ -86,7 +101,7 @@
                             android:textSize="20sp" />
 
                         <EditText
-                            android:id="@+id/editText2"
+                            android:id="@+id/edtModeloNuevo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
@@ -107,7 +122,7 @@
                             android:textSize="20sp" />
 
                         <EditText
-                            android:id="@+id/editText4"
+                            android:id="@+id/edtPrecioNuevo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
@@ -129,7 +144,7 @@
                             android:textSize="20sp" />
 
                         <EditText
-                            android:id="@+id/editText5"
+                            android:id="@+id/edtDescripcionNuevo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"

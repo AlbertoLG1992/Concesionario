@@ -1,5 +1,6 @@
 package com.example.alberto.concesionario.BaseDeDatos.Coches;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,7 @@ import com.example.alberto.concesionario.BaseDeDatos.DatabaseOpenhelper;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class TablaCoches {
@@ -92,6 +94,34 @@ public class TablaCoches {
         this.closeDatabase();
 
         return listaCoches;
+    }
+
+    /**
+     * Añade a la base de datos un coche
+     *
+     * @param coche :Coche
+     */
+    public void addCoche(Coche coche){
+        /* Se abre la base de datos */
+        this.openDatabaseWrite();
+        /* Se comprime la imagen para guardarla en tipo blob */
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        coche.getFoto().compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+
+        /* Se insertan en un ContentValues todos los campos y se hace un
+         * Insert en la base de datos */
+        if (this.database != null){
+            ContentValues values = new ContentValues();
+            values.put("marca", coche.getMarca());
+            values.put("modelo", coche.getModelo());
+            values.put("precio", String.valueOf(coche.getPrecio()));
+            values.put("descripcion", coche.getDescripcion());
+            values.put("foto", byteArrayOutputStream.toByteArray());
+            values.put("es_nuevo", coche.getEsNuevo() == true? 1 : 0);
+            database.insert("coches", null, values);
+        }
+        /* Se cierra la conexión */
+        this.closeDatabase();
     }
 
 }

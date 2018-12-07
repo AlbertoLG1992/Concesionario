@@ -3,12 +3,10 @@
     package="com.example.alberto.concesionario">
 
     <uses-feature android:name="android.hardware.camera" android:required="true" />
-    <!--
     <uses-feature android:name="android.hardware.camera2" android:required="true" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    -->
 
     <application
         android:allowBackup="true"
@@ -24,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddCochesNuevosActivity"></activity>
+        <activity android:name=".Activities.AddElementosDatabase.AddCochesNuevosActivity"></activity>
     </application>
 
 </manifest>
