@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesNuevosActivity;
+import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesUsadosActivity;
 import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
 import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
 
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     /* Variables para las ActivitiesForResult */
     static final int REQUEST_ADD_COCHE_NUEVO = 1;
     static final int REQUEST_ADD_COCHE_USADO = 2;
-    static final int REQUEST_ADD_EXTRA = 2;
+    static final int REQUEST_ADD_EXTRA = 3;
 
 
     @Override
@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         break;
                     }
                     case "Coches Usados":{
-                        //TODO ACTIVITY ADD COCHES USADOS
+                        Intent intent = new Intent(getApplicationContext(), AddCochesUsadosActivity.class);
+                        startActivityForResult(intent, REQUEST_ADD_COCHE_USADO);
                         break;
                     }
                     case "Extras":{
@@ -83,10 +84,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
         }
         if ((requestCode == REQUEST_ADD_COCHE_USADO) && (resultCode == RESULT_OK)){
-
+            this.navigationMenu.setSelectedItemId(R.id.navigationCochesUsados);
         }
         if ((requestCode == REQUEST_ADD_EXTRA) && (resultCode == RESULT_OK)){
-
+            this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
         }
     }
 

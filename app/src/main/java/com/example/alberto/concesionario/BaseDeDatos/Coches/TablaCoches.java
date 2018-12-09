@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.example.alberto.concesionario.BaseDeDatos.DatabaseOpenhelper;
+import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.io.ByteArrayInputStream;
@@ -118,9 +119,26 @@ public class TablaCoches {
             values.put("descripcion", coche.getDescripcion());
             values.put("foto", byteArrayOutputStream.toByteArray());
             values.put("es_nuevo", coche.getEsNuevo() == true? 1 : 0);
-            database.insert("coches", null, values);
+            this.database.insert("coches", null, values);
         }
         /* Se cierra la conexión */
+        this.closeDatabase();
+    }
+
+    public void addExtrasDeCoche(Coche coche, ArrayList<Extra> listaExtras){
+        /* Se abre la base de datos */
+        this.openDatabaseWrite();
+
+        /* Se recorre el arrayList para acer tantos insert como longitud tenga */
+        if (this.database != null){
+            for (int i = 0; i < listaExtras.size(); i++){
+                ContentValues values = new ContentValues();
+                values.put("id_coche", coche.getIdCoche());
+                values.put("id_extras", listaExtras.get(i).getId());
+                this.database.insert("coche_extra", null, values);
+            }
+        }
+        /* Se cierra la base de datos */
         this.closeDatabase();
     }
 

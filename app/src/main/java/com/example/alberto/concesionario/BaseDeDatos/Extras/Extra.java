@@ -41,6 +41,18 @@ public class Extra {
     public Extra() {
     }
 
+    /**
+     * Constructor de clase con un objeto de su misma clase
+     *
+     * @param extra :Extra
+     */
+    public Extra(Extra extra){
+        this.id = extra.getId();
+        this.nombre = extra.getNombre();
+        this.descripcion = extra.getDescripcion();
+        this.precio = extra.getPrecio();
+    }
+
     public int getId() {
         return id;
     }
