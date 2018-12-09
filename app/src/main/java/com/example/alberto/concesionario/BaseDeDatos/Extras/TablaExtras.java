@@ -1,5 +1,6 @@
 package com.example.alberto.concesionario.BaseDeDatos.Extras;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -74,5 +75,22 @@ public class TablaExtras {
         this.closeDatabase();
 
         return listaExtras;
+    }
+
+    /**
+     * Se añade un extra en la base de datos
+     *
+     * @param extra :Extra
+     */
+    public void addExtra(Extra extra){
+        this.openDatabaseWrite();
+        if (this.database != null){
+            ContentValues values = new ContentValues();
+            values.put("nombre", extra.getNombre());
+            values.put("descripcion", extra.getDescripcion());
+            values.put("precio", extra.getPrecio());
+            this.database.insert("extras", null, values);
+        }
+        this.closeDatabase();
     }
 }

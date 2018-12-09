@@ -13,13 +13,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesNuevosActivity;
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesUsadosActivity;
 import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
 import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
+import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
+import com.example.alberto.concesionario.BaseDeDatos.Extras.TablaExtras;
+import com.example.alberto.concesionario.Dialogs.DialogAddExtra;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener , DialogAddExtra.respuestaDialogAddExtras {
 
     /** ELEMENTOS **/
     private BottomNavigationView navigationMenu;
@@ -65,12 +69,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         break;
                     }
                     case "Coches Usados":{
+                        /* Se habre la actividad de AddCochesUsadosActivity */
                         Intent intent = new Intent(getApplicationContext(), AddCochesUsadosActivity.class);
                         startActivityForResult(intent, REQUEST_ADD_COCHE_USADO);
                         break;
                     }
                     case "Extras":{
-                        //TODO DIALOG NUEVO EXTRA
+                        /* Se habre Dialog AddExtra */
+                        DialogAddExtra dialogAddExtra = new DialogAddExtra();
+                        dialogAddExtra.show(getSupportFragmentManager(), "dialogo");
                         break;
                     }
                 }
@@ -78,6 +85,33 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         });
     }
 
+    /**
+     * Método iniciado al volver de DialogAddExtra
+     *
+     * @param aceptar :boolean
+     * @param extra :Extra
+     */
+    @Override
+    public void onRespuestaAddExtras(boolean aceptar, Extra extra) {
+        if (aceptar){
+            /* Se abre la base de datos en la tabla de extras y se añade el extra devuelto por
+             * el dialog, despues se recarga de nuevo el listView */
+            TablaExtras tablaExtras = new TablaExtras(this);
+            tablaExtras.addExtra(extra);
+            this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
+        }else {
+            Toast.makeText(this, "Error, todos los campos tienen que ir rellenos",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Método iniciado al volver de una actividad iniciada con ActivityForResult
+     *
+     * @param requestCode :int
+     * @param resultCode :int
+     * @param data :Intent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if ((requestCode == REQUEST_ADD_COCHE_NUEVO) && (resultCode == RESULT_OK)){
@@ -85,9 +119,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         if ((requestCode == REQUEST_ADD_COCHE_USADO) && (resultCode == RESULT_OK)){
             this.navigationMenu.setSelectedItemId(R.id.navigationCochesUsados);
-        }
-        if ((requestCode == REQUEST_ADD_EXTRA) && (resultCode == RESULT_OK)){
-            this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
         }
     }
 

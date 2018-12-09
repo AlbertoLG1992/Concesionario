@@ -125,6 +125,12 @@ public class TablaCoches {
         this.closeDatabase();
     }
 
+    /**
+     * Añade en la base de datos una serie de extras a un coche
+     *
+     * @param coche :Coche
+     * @param listaExtras :ArrayList<Extra>
+     */
     public void addExtrasDeCoche(Coche coche, ArrayList<Extra> listaExtras){
         /* Se abre la base de datos */
         this.openDatabaseWrite();
