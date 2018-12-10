@@ -27,10 +27,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.AddElementosDatabase.AddCochesNuevosActivity"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".Activities.AddElementosDatabase.AddCochesUsadosActivity"
-            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".Activities.AddElementosDatabase.AddCochesNuevosActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Activities.AddElementosDatabase.AddCochesUsadosActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Activities.DetallesElementos.DetalleCochesNuevosActivity"
+            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>

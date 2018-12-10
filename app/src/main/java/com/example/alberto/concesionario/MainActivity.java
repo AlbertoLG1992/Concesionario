@@ -11,19 +11,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesNuevosActivity;
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesUsadosActivity;
+import com.example.alberto.concesionario.Activities.DetallesElementos.DetalleCochesNuevosActivity;
 import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
 import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.TablaExtras;
 import com.example.alberto.concesionario.Dialogs.DialogAddExtra;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener , DialogAddExtra.respuestaDialogAddExtras {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
+        DialogAddExtra.respuestaDialogAddExtras, AdapterView.OnItemClickListener {
 
     /** ELEMENTOS **/
     private BottomNavigationView navigationMenu;
@@ -41,9 +44,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private AdapterExtra adapterExtra;
 
     /* Variables para las ActivitiesForResult */
-    static final int REQUEST_ADD_COCHE_NUEVO = 1;
-    static final int REQUEST_ADD_COCHE_USADO = 2;
-    static final int REQUEST_ADD_EXTRA = 3;
+    static final int REQUEST_COCHE_NUEVO = 1;
+    static final int REQUEST_COCHE_USADO = 2;
 
 
     @Override
@@ -65,13 +67,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     case "Coches Nuevos":{
                         /* Se habre la actividad de AddCochesNuevosActivity */
                         Intent intent = new Intent(getApplicationContext(), AddCochesNuevosActivity.class);
-                        startActivityForResult(intent, REQUEST_ADD_COCHE_NUEVO);
+                        startActivityForResult(intent, REQUEST_COCHE_NUEVO);
                         break;
                     }
                     case "Coches Usados":{
                         /* Se habre la actividad de AddCochesUsadosActivity */
                         Intent intent = new Intent(getApplicationContext(), AddCochesUsadosActivity.class);
-                        startActivityForResult(intent, REQUEST_ADD_COCHE_USADO);
+                        startActivityForResult(intent, REQUEST_COCHE_USADO);
                         break;
                     }
                     case "Extras":{
@@ -83,6 +85,26 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        switch (this.navigationActual){
+            case "Coches Nuevos":{
+                /* Crea un intent para abrir la actividad DetalleCochesNuevos y envia el id
+                 * escogido */
+                Intent intent = new Intent(getApplicationContext(), DetalleCochesNuevosActivity.class);
+                intent.putExtra("id", (int)this.adapterCoches.getItemId(position));
+                startActivityForResult(intent, REQUEST_COCHE_NUEVO);
+                break;
+            }
+            case "Coches Usados":{
+                break;
+            }
+            case "Extras":{
+                break;
+            }
+        }
     }
 
     /**
@@ -114,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((requestCode == REQUEST_ADD_COCHE_NUEVO) && (resultCode == RESULT_OK)){
+        if ((requestCode == REQUEST_COCHE_NUEVO) && (resultCode == RESULT_OK)){
             this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
         }
-        if ((requestCode == REQUEST_ADD_COCHE_USADO) && (resultCode == RESULT_OK)){
+        if ((requestCode == REQUEST_COCHE_USADO) && (resultCode == RESULT_OK)){
             this.navigationMenu.setSelectedItemId(R.id.navigationCochesUsados);
         }
     }
@@ -274,5 +296,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         /* CLICKABLES */
         this.navigationMenu.setOnNavigationItemSelectedListener(this);
+        this.listViewMain.setOnItemClickListener(this);
     }
 }

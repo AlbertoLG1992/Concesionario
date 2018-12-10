@@ -118,7 +118,7 @@ public class TablaCoches {
             values.put("precio", String.valueOf(coche.getPrecio()));
             values.put("descripcion", coche.getDescripcion());
             values.put("foto", byteArrayOutputStream.toByteArray());
-            values.put("es_nuevo", coche.getEsNuevo() == true? 1 : 0);
+            values.put("es_nuevo", coche.getEsNuevo()? 1 : 0);
             this.database.insert("coches", null, values);
         }
         /* Se cierra la conexión */
@@ -148,4 +148,62 @@ public class TablaCoches {
         this.closeDatabase();
     }
 
+    /**
+     * Devuleve un coche en concreto respecto a su id, si el id no existe, devuelve un coche
+     * vacío
+     *
+     * @param id :int
+     * @return Coche
+     */
+    public Coche extraerCoche(int id){
+        /* Se inicializa el coche para que en caso de que la consulta de un valor vacío
+         * devuelva un coche vacío en lugar de que de error */
+        Coche coche = new Coche();
+        Cursor c;
+        this.openDatabaseRead();
+        c = this.database.rawQuery("SELECT * FROM coches WHERE id_coche = " + id, null);
+        if (c.moveToFirst()){
+            coche = new Coche(c.getInt(0), c.getString(1),
+                    c.getString(2), c.getInt(3), c.getString(4),
+                    BitmapFactory.decodeStream(new ByteArrayInputStream(c.getBlob(5))),
+                    c.getInt(6) == 1?  true :  false);
+        }
+        this.closeDatabase();
+        return coche;
+    }
+
+    /**
+     * Se modifica un coche de la base de datos, se toman como parametros para el cambio
+     * los datos del coche que entra por parametros
+     *
+     * @param coche :Coche
+     */
+    public void modificarCoche(Coche coche){
+        this.openDatabaseWrite();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        coche.getFoto().compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+
+        if (this.database != null){
+            ContentValues values = new ContentValues();
+            values.put("marca", coche.getMarca());
+            values.put("modelo", coche.getModelo());
+            values.put("precio", String.valueOf(coche.getPrecio()));
+            values.put("descripcion", coche.getDescripcion());
+            values.put("foto", byteArrayOutputStream.toByteArray());
+            values.put("es_nuevo", coche.getEsNuevo()? 1 : 0);
+            this.database.update("coches", values, "id_coche = " + coche.getIdCoche(), null);
+        }
+        this.closeDatabase();
+    }
+
+    /**
+     * Elimina un coche de la base de datos
+     *
+     * @param coche :Coche
+     */
+    public void eliminarCoche(Coche coche){
+        this.openDatabaseWrite();
+        this.database.execSQL("DELETE FROM coches WHERE id_coche = " + coche.getIdCoche());
+        this.closeDatabase();
+    }
 }

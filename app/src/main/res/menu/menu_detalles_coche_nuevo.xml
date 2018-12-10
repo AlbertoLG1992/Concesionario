@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemGuardarCambios"
+        android:icon="@drawable/ic_done"
+        android:title="Guardar Cambios"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemCancelarCambios"
+        android:icon="@drawable/ic_not"
+        android:title="Descartar Cambios"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemModificar"
+        android:title="Modificar"
+        android:visible="true" />
+    <item
+        android:id="@+id/itemEliminar"
+        android:title="Eliminar" />
+    <item
+        android:id="@+id/itemGenerarPresupuesto"
+        android:title="Generar Presupuesto" />
+</menu>

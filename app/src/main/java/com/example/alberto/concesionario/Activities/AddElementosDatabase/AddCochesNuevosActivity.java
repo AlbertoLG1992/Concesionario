@@ -88,7 +88,6 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
             /* Recoge un un bitmap del ResultSet y lo carga al imageView */
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.getParcelable("data");
-            //TODO RECOGER IMAGEN CON MÁS CALIDAD
             imageBitmap = transform(imageBitmap);
             this.imageView.setImageBitmap(imageBitmap);
             this.cambiaFoto = true;
