@@ -39,6 +39,7 @@
         <activity
             android:name=".Activities.DetallesElementos.DetallesCochesUsadosActivity"
             android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".Activities.Presupuestos.VerPresupuestoCocheNuevoActivity"></activity>
     </application>
 
 </manifest>

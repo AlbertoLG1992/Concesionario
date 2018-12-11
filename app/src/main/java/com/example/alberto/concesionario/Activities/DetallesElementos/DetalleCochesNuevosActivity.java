@@ -19,18 +19,24 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.alberto.concesionario.Activities.Presupuestos.Presupuesto;
+import com.example.alberto.concesionario.Activities.Presupuestos.VerPresupuestoCocheNuevoActivity;
 import com.example.alberto.concesionario.BaseDeDatos.Coches.Coche;
 import com.example.alberto.concesionario.BaseDeDatos.Coches.TablaCoches;
+import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
+import com.example.alberto.concesionario.Dialogs.DialogAsignarExtras;
 import com.example.alberto.concesionario.Dialogs.DialogBorrarCoche;
 import com.example.alberto.concesionario.R;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class DetalleCochesNuevosActivity extends AppCompatActivity implements View.OnClickListener, DialogBorrarCoche.respuestaDialogBorrarCoche {
+public class DetalleCochesNuevosActivity extends AppCompatActivity implements View.OnClickListener,
+        DialogBorrarCoche.respuestaDialogBorrarCoche, DialogAsignarExtras.respuestaDialogAsignarExtras {
 
     /** ELEMENTOS **/
     private Toolbar toolbar;
@@ -196,7 +202,8 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
             }
             case R.id.itemGenerarPresupuesto:{
                 Toast.makeText(this, "Generando...", Toast.LENGTH_LONG).show();
-                //TODO GENERAR PRESUPUESTO
+                DialogAsignarExtras dialog = new DialogAsignarExtras();
+                dialog.show(getSupportFragmentManager(), "dialogo extras");
                 return true;
             }
         }
@@ -348,6 +355,18 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
             Toast.makeText(this, "Borrado...", Toast.LENGTH_LONG).show();
             setResult(RESULT_OK);
             finish();
+        }
+    }
+
+    @Override
+    public void onRespuestaAsignarExtras(ArrayList<Extra> listaExtras, boolean aceptar) {
+        if (aceptar){
+            Presupuesto presupuesto = new Presupuesto(this.coche, listaExtras);
+            Intent intent = new Intent(getApplicationContext(), VerPresupuestoCocheNuevoActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("presupuesto", presupuesto);
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
     }
 }
