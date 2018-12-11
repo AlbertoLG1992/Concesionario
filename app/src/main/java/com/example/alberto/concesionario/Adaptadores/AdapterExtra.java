@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.alberto.concesionario.BaseDeDatos.Coches.Coche;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.TablaExtras;
 import com.example.alberto.concesionario.R;
@@ -29,6 +30,17 @@ public class AdapterExtra extends BaseAdapter {
         TablaExtras tablaExtras = new TablaExtras(context);
         this.items = tablaExtras.todosLosExtras();
         this.activity = activity;
+    }
+
+    /**
+     * Método para que el adaptador muestre la lista filtrando por coche
+     *
+     * @param coche :Coche
+     * @param context :Context
+     */
+    public void filtrarPorCoche(Coche coche, Context context){
+        TablaExtras tablaExtras = new TablaExtras(context);
+        this.items = tablaExtras.verExtrasDeCoche(coche);
     }
 
     /**

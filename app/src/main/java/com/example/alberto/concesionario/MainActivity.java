@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesNuevosActivity;
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesUsadosActivity;
 import com.example.alberto.concesionario.Activities.DetallesElementos.DetalleCochesNuevosActivity;
+import com.example.alberto.concesionario.Activities.DetallesElementos.DetallesCochesUsadosActivity;
 import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
 import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
@@ -99,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             }
             case "Coches Usados":{
+                Intent intent = new Intent(getApplicationContext(), DetallesCochesUsadosActivity.class);
+                intent.putExtra("id", (int)this.adapterCoches.getItemId(position));
+                startActivityForResult(intent, REQUEST_COCHE_USADO);
                 break;
             }
             case "Extras":{

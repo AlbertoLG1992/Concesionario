@@ -156,7 +156,7 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
                 /* Cambia el estado de estaModificandose */
                 this.estaModificandose = !this.estaModificandose;
                 this.cambiarEstadoModificar(this.estaModificandose);
-                break;
+                return true;
             }
             case R.id.itemGuardarCambios:{
                 /* Comprueba que se pueden modificar los campos del coche y lo modifica
@@ -173,7 +173,7 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
                     Toast.makeText(this, "Para guardar cambios, antes activa la " +
                             "opción modificar...", Toast.LENGTH_LONG).show();
                 }
-                break;
+                return true;
             }
             case R.id.itemCancelarCambios:{
                 /* Cancela los cambios hechos en la actividad sobre el coche y devuelve a
@@ -186,18 +186,18 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
                     Toast.makeText(this, "Para descartar cambios, antes activa la " +
                             "opción modificar...", Toast.LENGTH_LONG).show();
                 }
-                break;
+                return true;
             }
             case R.id.itemEliminar:{
                 /* Llama al Dialog para preguntar si es seguro que quiere borrar el coche */
                 DialogBorrarCoche dialog = new DialogBorrarCoche();
                 dialog.show(getSupportFragmentManager(), "dialogo");
-                break;
+                return true;
             }
             case R.id.itemGenerarPresupuesto:{
                 Toast.makeText(this, "Generando...", Toast.LENGTH_LONG).show();
                 //TODO GENERAR PRESUPUESTO
-                break;
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);

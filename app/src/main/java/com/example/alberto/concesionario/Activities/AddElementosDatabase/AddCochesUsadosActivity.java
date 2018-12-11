@@ -75,8 +75,12 @@ public class AddCochesUsadosActivity extends AppCompatActivity implements View.O
             /* Se abre la tabla de coches de la base de datos y se inserta el coche */
             TablaCoches tablaCoches = new TablaCoches(this);
             tablaCoches.addCoche(coche);
+            /* Dado que el coche que actualmente tenemos no tiene id se
+             * hace una busqueda del coche en la base de datos para entraer el coche
+             * con id, esto es necesario para poder guardar sus extras */
+            coche = tablaCoches.extraerCocheSinId(coche);
             /* Se añaden los extras del coche en caso de que la longitud de la lista sea positiva */
-            if (listaExtras.size() > 0){
+            if (listaExtras.size() != 0){
                 tablaCoches.addExtrasDeCoche(coche, listaExtras);
             }
             /* Se notifica que el coche se ha añadido correctamente */

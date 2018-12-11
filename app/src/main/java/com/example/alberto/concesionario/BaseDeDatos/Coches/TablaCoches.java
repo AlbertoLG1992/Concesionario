@@ -173,6 +173,34 @@ public class TablaCoches {
     }
 
     /**
+     * Método para extraer de la base de datos un coche sin conocer su id
+     *
+     * @param coche :Coche
+     * @return Coche
+     */
+    public Coche extraerCocheSinId(Coche coche){
+        Coche cocheOut = new Coche();
+        Cursor c;
+        this.openDatabaseRead();
+        /* Como no se conoce el id se hace una busqueda por todos los campos
+         * exceptuando el id */
+        c = this.database.rawQuery("SELECT * FROM coches " +
+                "WHERE marca = '" + coche.getMarca() + "' AND " +
+                        "modelo = '" + coche.getModelo() + "' AND " +
+                        "precio = " + coche.getPrecio() + " AND " +
+                        "descripcion = '" + coche.getDescripcion() + "'",
+                null);
+        if (c.moveToFirst()){
+            coche = new Coche(c.getInt(0), c.getString(1),
+                    c.getString(2), c.getInt(3), c.getString(4),
+                    BitmapFactory.decodeStream(new ByteArrayInputStream(c.getBlob(5))),
+                    c.getInt(6) == 1?  true :  false);
+        }
+        this.closeDatabase();
+        return coche;
+    }
+
+    /**
      * Se modifica un coche de la base de datos, se toman como parametros para el cambio
      * los datos del coche que entra por parametros
      *

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.alberto.concesionario.BaseDeDatos.Coches.Coche;
 import com.example.alberto.concesionario.BaseDeDatos.Coches.TablaCoches;
 import com.example.alberto.concesionario.BaseDeDatos.DatabaseOpenhelper;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
@@ -92,5 +93,36 @@ public class TablaExtras {
             this.database.insert("extras", null, values);
         }
         this.closeDatabase();
+    }
+
+
+    /**
+     * Devuelve un arrayList con los extras de un coche
+     *
+     * @param coche :Coche
+     * @return :ArrayList<Extra>
+     */
+    public ArrayList<Extra> verExtrasDeCoche(Coche coche){
+        ArrayList<Extra> listaExtras = new ArrayList<Extra>();
+        Cursor c;
+
+        this.openDatabaseRead();
+        c = this.database.rawQuery(
+                "SELECT extras.id_extras, extras.nombre, extras.descripcion, extras.precio " +
+                "FROM coche_extra " +
+                    "INNER JOIN extras on coche_extra.id_extras = extras.id_extras " +
+                "WHERE coche_extra.id_coche = " + coche.getIdCoche(), null);
+
+        if (c.moveToFirst()){
+            do{
+                listaExtras.add(new Extra(c.getInt(0), c.getString(1),
+                        c.getString(2), c.getInt(3)));
+            }while (c.moveToNext());
+        }
+
+        c.close();
+        this.database.close();
+
+        return listaExtras;
     }
 }

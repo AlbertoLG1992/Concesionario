@@ -25,7 +25,9 @@
             android:layout_below="@+id/toolbarAddCoches"
             android:layout_alignParentBottom="true"
             android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp">
+            android:layout_marginBottom="0dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
 
 
             <LinearLayout
@@ -150,7 +152,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:ems="10"
-                            android:inputType="textImeMultiLine|textPersonName" />
+                            android:inputType="textMultiLine|textPersonName" />
                     </TableRow>
                 </TableLayout>
             </LinearLayout>

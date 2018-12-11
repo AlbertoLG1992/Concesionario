@@ -10,12 +10,13 @@ import android.support.v4.app.DialogFragment;
 public class DialogBorrarCoche extends DialogFragment {
 
     respuestaDialogBorrarCoche respuesta;
+    private String queBorrar = "coche";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("ATENCIÓN")
-                .setMessage("¿Seguro que desea borrar el coche?\n" +
+                .setMessage("¿Seguro que desea borrar el " + queBorrar + "?\n" +
                         "Despues no habrá vuelta atrás...")
                 .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                     @Override
@@ -34,6 +35,15 @@ public class DialogBorrarCoche extends DialogFragment {
 
     public interface respuestaDialogBorrarCoche {
         public void onRespuestaBorrarCoche(boolean seBorra);
+    }
+
+    /**
+     * Metodo para enviar un string con que es lo que se quiere borrar
+     *
+     * @param queBorrar :String
+     */
+    public void setQueBorrar(String queBorrar){
+        this.queBorrar = queBorrar;
     }
 
     @Override
