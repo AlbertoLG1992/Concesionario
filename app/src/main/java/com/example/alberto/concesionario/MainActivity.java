@@ -20,6 +20,7 @@ import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCoch
 import com.example.alberto.concesionario.Activities.AddElementosDatabase.AddCochesUsadosActivity;
 import com.example.alberto.concesionario.Activities.DetallesElementos.DetalleCochesNuevosActivity;
 import com.example.alberto.concesionario.Activities.DetallesElementos.DetallesCochesUsadosActivity;
+import com.example.alberto.concesionario.Activities.Maps.MapsActivity;
 import com.example.alberto.concesionario.Adaptadores.AdapterCoches;
 import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;

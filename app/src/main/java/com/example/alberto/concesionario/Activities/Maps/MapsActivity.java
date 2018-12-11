@@ -1,8 +1,9 @@
-package com.example.alberto.concesionario;
+package com.example.alberto.concesionario.Activities.Maps;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.example.alberto.concesionario.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
