@@ -121,8 +121,41 @@ public class TablaExtras {
         }
 
         c.close();
-        this.database.close();
+        this.closeDatabase();
 
         return listaExtras;
+    }
+
+    /**
+     * Método que pregunta si existen dependencias de un extra con los coches usados
+     * para poder borrarlo
+     *
+     * @param extra :Extra
+     * @return boolean true si existe y false en caso contrario
+     */
+    public boolean existenDependencias(Extra extra){
+        boolean existe;
+        Cursor c;
+
+        this.openDatabaseRead();
+        c = this.database.rawQuery("SELECT * FROM coche_extra WHERE id_extras = " + extra.getId(), null);
+
+        existe = c.moveToFirst()? true: false;
+
+        c.close();
+        this.closeDatabase();
+
+        return existe;
+    }
+
+    /**
+     * Elimina un extra de la base de datos
+     *
+     * @param extra :Extra
+     */
+    public void eliminarExtra(Extra extra){
+        this.openDatabaseWrite();
+        this.database.execSQL("DELETE FROM extras WHERE id_extras = " + extra.getId());
+        this.closeDatabase();
     }
 }

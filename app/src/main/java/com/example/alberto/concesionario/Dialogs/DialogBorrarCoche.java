@@ -38,7 +38,8 @@ public class DialogBorrarCoche extends DialogFragment {
     }
 
     /**
-     * Metodo para enviar un string con que es lo que se quiere borrar
+     * Metodo para enviar un string con que es lo que se quiere borrar, por defecto son
+     * coches, pero tambien se puede cambiar mediante este método
      *
      * @param queBorrar :String
      */

@@ -25,9 +25,11 @@ import com.example.alberto.concesionario.Adaptadores.AdapterExtra;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.Extra;
 import com.example.alberto.concesionario.BaseDeDatos.Extras.TablaExtras;
 import com.example.alberto.concesionario.Dialogs.DialogAddExtra;
+import com.example.alberto.concesionario.Dialogs.DialogBorrarCoche;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
-        DialogAddExtra.respuestaDialogAddExtras, AdapterView.OnItemClickListener {
+        DialogAddExtra.respuestaDialogAddExtras, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,
+        DialogBorrarCoche.respuestaDialogBorrarCoche {
 
     /** ELEMENTOS **/
     private BottomNavigationView navigationMenu;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private String navigationActual = "";
     private AdapterCoches adapterCoches;
     private AdapterExtra adapterExtra;
+    private Extra extraBorrar;
 
     /* Variables para las ActivitiesForResult */
     static final int REQUEST_COCHE_NUEVO = 1;
@@ -88,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         });
     }
 
+    /**
+     * Metodo que se ejecuta al pulsar normal sobre el listView
+     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (this.navigationActual){
@@ -105,8 +111,43 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 startActivityForResult(intent, REQUEST_COCHE_USADO);
                 break;
             }
-            case "Extras":{
-                break;
+        }
+    }
+
+    /**
+     * Método que se ejecuta al pulsar en longClick sobre el listView
+     */
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        if (this.navigationActual.equals("Extras")){
+            this.extraBorrar = (Extra)this.adapterExtra.getItem(position);
+            DialogBorrarCoche dialog = new DialogBorrarCoche();
+            dialog.setQueBorrar("extra");
+            dialog.show(getSupportFragmentManager(), "Dialogo");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Método que se ejecuta al volver del dialogBorrarCoche
+     *
+     * @param seBorra :boolean
+     */
+    @Override
+    public void onRespuestaBorrarCoche(boolean seBorra) {
+        if (seBorra){
+            /* Si se pulsa que se quiere borrar en primer lugar es necesario comprobar que
+             * no existan dependencias en los coches usados, en caso de que no existan dependencias
+             * se borra sin problema */
+            TablaExtras tablaExtras = new TablaExtras(getApplicationContext());
+            if (!tablaExtras.existenDependencias(this.extraBorrar)){
+                tablaExtras.eliminarExtra(this.extraBorrar);
+                Toast.makeText(this, "Borrado...", Toast.LENGTH_LONG).show();
+                this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
+            }else{
+                Toast.makeText(this, "No se puede borrar, existen dependencias",
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -261,7 +302,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -301,5 +341,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         /* CLICKABLES */
         this.navigationMenu.setOnNavigationItemSelectedListener(this);
         this.listViewMain.setOnItemClickListener(this);
+        this.listViewMain.setOnItemLongClickListener(this);
     }
 }
