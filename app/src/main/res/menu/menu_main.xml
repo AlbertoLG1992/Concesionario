@@ -10,4 +10,7 @@
     <item
         android:id="@+id/itemExtras"
         android:title="Extras" />
+    <item
+        android:id="@+id/itemVerUbicación"
+        android:title="Ver Ubicación" />
 </menu>

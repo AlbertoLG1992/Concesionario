@@ -301,6 +301,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
                 break;
             }
+            case R.id.itemVerUbicación:{
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
+                break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
