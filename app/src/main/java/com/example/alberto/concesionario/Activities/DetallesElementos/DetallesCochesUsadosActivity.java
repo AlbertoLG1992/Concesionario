@@ -12,13 +12,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.alberto.concesionario.Activities.Presupuestos.Presupuesto;
 import com.example.alberto.concesionario.BaseDeDatos.Coches.Coche;
 import com.example.alberto.concesionario.BaseDeDatos.Coches.TablaCoches;
+import com.example.alberto.concesionario.BaseDeDatos.Extras.TablaExtras;
 import com.example.alberto.concesionario.Dialogs.DialogBorrarCoche;
+import com.example.alberto.concesionario.Dialogs.DialogNombreCliente;
 import com.example.alberto.concesionario.Dialogs.DialogVerExtraDeCoche;
+import com.example.alberto.concesionario.PDF.GenerarPDF;
 import com.example.alberto.concesionario.R;
 
-public class DetallesCochesUsadosActivity extends AppCompatActivity implements DialogBorrarCoche.respuestaDialogBorrarCoche {
+public class DetallesCochesUsadosActivity extends AppCompatActivity implements DialogBorrarCoche.respuestaDialogBorrarCoche, DialogNombreCliente.respuestaDialogNombreCliente{
 
     /** ELEMENTOS **/
     private Toolbar toolbar;
@@ -82,11 +86,33 @@ public class DetallesCochesUsadosActivity extends AppCompatActivity implements D
                 return true;
             }
             case R.id.itemReservar:{
-                //TODO ENVIAR UN CORREO CON LOS DATOS DE LA RESERVA
+                DialogNombreCliente dialog = new DialogNombreCliente();
+                dialog.show(getSupportFragmentManager(), "dialog");
                 break;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRespuestaDialogNombreCliente(String nombre) {
+        this.generarPresupuesto(nombre);
+    }
+
+    private void generarPresupuesto(String nombre){
+        TablaExtras tablaExtras = new TablaExtras(getApplicationContext());
+        Presupuesto presupuesto = new Presupuesto(this.coche, tablaExtras.verExtrasDeCoche(this.coche));
+
+        GenerarPDF pdf;
+        pdf = new GenerarPDF(getApplicationContext());
+        pdf.openDocument();
+        pdf.addMetaData("Presupuesto", "Presupuesto de un coche", "Safiro Auto");
+        pdf.addTtitulo("Presupuesto de Ocasión", presupuesto.getNombreCoche());
+        pdf.addNombreCliente(nombre);
+        pdf.crearTablaPresupuesto(presupuesto);
+        pdf.closeDocument();
+
+        //TODO ENVIAR PDF
     }
 
     /**

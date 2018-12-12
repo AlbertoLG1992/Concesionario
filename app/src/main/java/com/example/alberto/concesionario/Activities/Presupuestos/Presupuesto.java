@@ -31,21 +31,53 @@ public class Presupuesto implements Serializable {
     }
 
     /**
-     * Genera un string con el presupuesto
+     * Devuelve un string con el total del presupuesto
      *
      * @return String
      */
-    public String generarPresupuesto(){
-        String presupuestoTotal = this.nombreCoche + " ----> " + this.precioCoche + "€\n";
+    public String getPrecioTotalString(){
+        return String.valueOf(this.generarPrecioPresupuesto()) + "€";
+    }
 
-        for (int i = 0; i < this.nombreExtras.size(); i++){
-            presupuestoTotal += this.nombreExtras.get(i) + " ----> " + this.precioExtras.get(i) + "€\n";
-        }
+    /**
+     * Devuelve un string con el nombre del extra en la posición que entre por parametro
+     *
+     * @param posicion :int
+     * @return String
+     */
+    public String getNombreExtraIndividual(int posicion){
+        return this.nombreExtras.get(posicion);
+    }
 
-        presupuestoTotal += "\n\n";
-        presupuestoTotal += "Total ----> " + this.generarPrecioPresupuesto() + "€";
+    /**
+     * Devuelve un string con el precio del extra en la posición que entre por parametro
+     *
+     * @param posicion :int
+     * @return String
+     */
+    public String getPrecioExtraIndividual(int posicion){
+        return String.valueOf(this.precioExtras.get(posicion)) + "€";
+    }
 
-        return presupuestoTotal;
+    /**
+     * Devuelve un arrayList con la cabecera que tendra la tabla de la factura
+     *
+     * @return String
+     */
+    public ArrayList<String> cabeceraFactura(){
+        ArrayList<String> listaOut = new ArrayList<String>();
+        listaOut.add(this.getNombreCoche());
+        listaOut.add(String.valueOf(this.precioCoche) + "€");
+        return listaOut;
+    }
+
+    /**
+     * Devuelve el número de columnas del presupuesto
+     *
+     * @return :int
+     */
+    public int numColumnasPresupuesto(){
+        return 2;
     }
 
     /**
@@ -61,6 +93,15 @@ public class Presupuesto implements Serializable {
         }
 
         return precioTotal;
+    }
+
+    /**
+     * Devuelve la cantidad total de extras
+     *
+     * @return :int
+     */
+    public int numTotalExtras(){
+        return this.nombreExtras.size();
     }
 
     public String getNombreCoche() {

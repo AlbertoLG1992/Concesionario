@@ -201,7 +201,6 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
                 return true;
             }
             case R.id.itemGenerarPresupuesto:{
-                Toast.makeText(this, "Generando...", Toast.LENGTH_LONG).show();
                 DialogAsignarExtras dialog = new DialogAsignarExtras();
                 dialog.show(getSupportFragmentManager(), "dialogo extras");
                 return true;
@@ -361,6 +360,8 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
     @Override
     public void onRespuestaAsignarExtras(ArrayList<Extra> listaExtras, boolean aceptar) {
         if (aceptar){
+            Toast.makeText(this, "Generando...", Toast.LENGTH_LONG).show();
+
             Presupuesto presupuesto = new Presupuesto(this.coche, listaExtras);
             Intent intent = new Intent(getApplicationContext(), VerPresupuestoCocheNuevoActivity.class);
             Bundle bundle = new Bundle();

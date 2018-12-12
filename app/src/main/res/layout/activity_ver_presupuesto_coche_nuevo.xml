@@ -5,9 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.Presupuestos.VerPresupuestoCocheNuevoActivity">
-<com.github.barteksc.pdfviewer.PDFView
-    android:id="@+id/visorPdf"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/visorPdf"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/btnRecargar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Recargar" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            android:clickable="true"
+            android:src="@drawable/ic_email"
+            app:fabSize="normal" />
+    </RelativeLayout>
+
 </android.support.constraint.ConstraintLayout>
