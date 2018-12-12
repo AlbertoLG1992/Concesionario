@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -112,11 +114,20 @@ public class VerPresupuestoCocheNuevoActivity extends AppCompatActivity implemen
 
     private void enviarCorreo(){
         String[] TO = {this.datosCliente.getEmail()};
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("*/*");
+        ArrayList<Uri> listasUris = new ArrayList<Uri>();
+        listasUris.add(pdf.verUriPDF());
+
+        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         intent.putExtra(Intent.EXTRA_EMAIL, TO);
         intent.putExtra(Intent.EXTRA_SUBJECT, "Presupuesto Safiro Auto");
-        intent.putExtra(Intent.EXTRA_STREAM, pdf.verUriPDF());
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, listasUris);
+        intent.putExtra(Intent.EXTRA_TEXT, "Mensaje generado por SafiroApp");
+
+        /* Para evitar las politicas de seguridad de android */
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        intent.setType("*/*");
         startActivity(intent);
     }
 

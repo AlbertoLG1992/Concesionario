@@ -1,6 +1,9 @@
 package com.example.alberto.concesionario.Activities.DetallesElementos;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +24,8 @@ import com.example.alberto.concesionario.Dialogs.DialogNombreCliente;
 import com.example.alberto.concesionario.Dialogs.DialogVerExtraDeCoche;
 import com.example.alberto.concesionario.PDF.GenerarPDF;
 import com.example.alberto.concesionario.R;
+
+import java.util.ArrayList;
 
 public class DetallesCochesUsadosActivity extends AppCompatActivity implements DialogBorrarCoche.respuestaDialogBorrarCoche, DialogNombreCliente.respuestaDialogNombreCliente{
 
@@ -112,7 +117,22 @@ public class DetallesCochesUsadosActivity extends AppCompatActivity implements D
         pdf.crearTablaPresupuesto(presupuesto);
         pdf.closeDocument();
 
-        //TODO ENVIAR PDF
+        String[] TO = {"albertolg1992@gmail.com"};
+        ArrayList<Uri> listasUris = new ArrayList<Uri>();
+        listasUris.add(pdf.verUriPDF());
+
+        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        intent.putExtra(Intent.EXTRA_EMAIL, TO);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Presupuesto Safiro Auto");
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, listasUris);
+        intent.putExtra(Intent.EXTRA_TEXT, "Mensaje generado por SafiroApp");
+
+        /* Para evitar las politicas de seguridad de android */
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        intent.setType("*/*");
+        startActivity(intent);
     }
 
     /**

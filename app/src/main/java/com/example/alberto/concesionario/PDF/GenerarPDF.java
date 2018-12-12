@@ -61,8 +61,11 @@ public class GenerarPDF {
     public void openDocument(){
         this.createFile();
         try {
-            this.document = new Document(PageSize.A4);
+            this.document = new Document();
             this.pdfWriter = PdfWriter.getInstance(this.document, new FileOutputStream(this.pdfFile));
+            this.document.addCreationDate();
+            this.document.addProducer();
+            this.document.setPageSize(PageSize.A4);
             this.document.open();
         }catch (Exception e){
             Log.e("openDocument", e.toString());
@@ -74,6 +77,7 @@ public class GenerarPDF {
      */
     public void closeDocument(){
         this.document.close();
+        this.pdfWriter.close();
     }
 
     /**
@@ -87,7 +91,6 @@ public class GenerarPDF {
         this.document.addTitle(titulo);
         this.document.addSubject(tema);
         this.document.addAuthor(autor);
-
     }
 
     /**
@@ -243,6 +246,6 @@ public class GenerarPDF {
     }
 
     public Uri verUriPDF(){
-        return Uri.parse(this.pdfFile.getAbsoluteFile().toString());
+        return Uri.fromFile(this.pdfFile);
     }
 }
