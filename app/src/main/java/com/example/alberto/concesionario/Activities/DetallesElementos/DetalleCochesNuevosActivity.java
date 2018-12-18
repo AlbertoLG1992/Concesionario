@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,6 +74,101 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
         this.cambiarEstadoModificar(this.estaModificandose);
     }
 
+    /**
+     * Inicia los elementos de la actividad y los enlaza con el XML y los hace
+     * clickables
+     */
+    private void iniciarElementos() {
+        /* XML */
+        this.toolbar = (Toolbar) findViewById(R.id.toolbarAddCoches);
+        this.imageButtonFoto = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoFoto);
+        this.imageButtonGaleria = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoGaleria);
+        this.imageView = (ImageView) findViewById(R.id.imgvAddCochesNuevos);
+        this.edtModelo = (EditText) findViewById(R.id.edtModeloNuevo);
+        this.edtDescripcion = (EditText) findViewById(R.id.edtDescripcionNuevo);
+        this.edtPrecio = (EditText) findViewById(R.id.edtPrecioNuevo);
+        this.edtMarca = (EditText) findViewById(R.id.edtMarcaNuevo);
+
+        /* CLICKABLE */
+        this.imageButtonFoto.setOnClickListener(this);
+        this.imageButtonGaleria.setOnClickListener(this);
+    }
+
+    /**
+     * Método que escribe el titulo del toolbar y lo muestra
+     */
+    private void iniciarToolbar(){
+        this.toolbar.setTitle("Detalles");
+        this.toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(this.toolbar);
+    }
+
+    /**
+     * Extrae del objeto coche todos los atributos para rellenar los elementos de la actividad
+     */
+    private void rellenarElementos(){
+        this.imageView.setImageBitmap(this.coche.getFoto());
+        this.edtDescripcion.setText(this.coche.getDescripcion());
+        this.edtMarca.setText(this.coche.getMarca());
+        this.edtPrecio.setText(String.valueOf(this.coche.getPrecio()));
+        this.edtModelo.setText(this.coche.getModelo());
+    }
+
+    /**
+     * Metodo para insertar el menú en el toolbar
+     *
+     * @param menu :Menu
+     * @return boolean
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detalles_coche_nuevo, menu);
+        return true;
+    }
+
+    /**
+     * Método que cambia el estado del menú
+     *
+     * @param menu :Menu
+     * @return boolean
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        menu.findItem(R.id.itemModificar).setEnabled(!estaModificandose);
+        menu.findItem(R.id.itemEliminar).setEnabled(!estaModificandose);
+        menu.findItem(R.id.itemGenerarPresupuesto).setEnabled(!estaModificandose);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * Cambia el estado de los elementos de la actividad dependiendo si se estan modificando
+     * los campos o no
+     *
+     * @param seModifica :boolean
+     */
+    private void cambiarEstadoModificar(boolean seModifica){
+        /* En caso de que no se este modificando oculta los botones, pero en caso
+         * de que SI se este modificando, se muestran */
+        if (seModifica){
+            this.imageButtonGaleria.setVisibility(View.VISIBLE);
+            this.imageButtonFoto.setVisibility(View.VISIBLE);
+        }else {
+            this.imageButtonFoto.setVisibility(View.GONE);
+            this.imageButtonGaleria.setVisibility(View.GONE);
+        }
+        /* Se desactivan y activan los EditText de la actividad dependiendo de si se
+         * está modificando o no */
+        this.edtModelo.setEnabled(seModifica);
+        this.edtPrecio.setEnabled(seModifica);
+        this.edtMarca.setEnabled(seModifica);
+        this.edtDescripcion.setEnabled(seModifica);
+    }
+
+    /**
+     * Método que se activa al pulsar sobre un objeto clickable de la actividad
+     *
+     * @param v :View
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -97,29 +193,121 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
     }
 
     /**
-     * Cambia el estado de los elementos de la actividad dependiendo si se estan modificando
-     * los campos o no
+     * Método que se activa cuando vuelve desde una Actividad que se inicio con
+     * startActivityForResult de forma correcta
      *
-     * @param seModifica :boolean
+     * @param requestCode :int
+     * @param resultCode :int
+     * @param data :Intent
      */
-    private void cambiarEstadoModificar(boolean seModifica){
-        if (seModifica){
-            this.imageButtonGaleria.setVisibility(View.VISIBLE);
-            this.imageButtonFoto.setVisibility(View.VISIBLE);
-        }else {
-            this.imageButtonFoto.setVisibility(View.GONE);
-            this.imageButtonGaleria.setVisibility(View.GONE);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            /* Vuelve desde capturar foto, recoge un un bitmap con la foto del ResultSet y
+             * lo pasa por una función para redimensionarlo antes de cargarlo al imageView */
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.getParcelable("data");
+            imageBitmap = redimensionar(imageBitmap);
+            this.imageView.setImageBitmap(imageBitmap);
         }
-        this.edtModelo.setEnabled(seModifica);
-        this.edtPrecio.setEnabled(seModifica);
-        this.edtMarca.setEnabled(seModifica);
-        this.edtDescripcion.setEnabled(seModifica);
+        if (requestCode == REQUEST_IMAGE_GALERIA && resultCode == RESULT_OK){
+            /* Recoge la direccion donde se encuentra la imagen */
+            Uri uri = data.getData();
+            try {
+                /* Recoge del enlace un bitmap y lo redimensiona antes de cargarlo
+                 * en el imageView */
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                bitmap = redimensionar(bitmap);
+                this.imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Función que recoje un Bitmap y lo redimensiona
+     *
+     * @param source :Bitmap
+     * @return Bitmap
+     */
+    private Bitmap redimensionar(Bitmap source) {
+        int sizeWidth = source.getWidth();
+        int sizeHeight = sizeWidth / 2 + 20;
+        int x = 0;
+        int y = 0;
+        return Bitmap.createBitmap(source, x, y, sizeWidth, sizeHeight);
+    }
+
+    /**
+     * Método que se ejecuta cuando se pulsa en alguno de los item del menú
+     *
+     * @param item :MenuItem
+     * @return boolean
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.itemModificar:{
+                /* Cambia el estado de estaModificandose y notifica ese estado a todos los
+                * elementos de la actividad */
+                this.estaModificandose = !this.estaModificandose;
+                this.cambiarEstadoModificar(this.estaModificandose);
+                return true;
+            }
+            case R.id.itemGuardarCambios:{
+                /* Comprueba que se pueden modificar los campos del coche y lo modifica si
+                 * es afirmativo */
+                if (this.estaModificandose) {
+                    if (this.comprobarCamposRellenos()) {
+                        this.estaModificandose = false;
+                        this.cambiarEstadoModificar(false);
+
+                        /* Se modifica y se envia un resultOk al main */
+                        this.modificarCoche();
+                        setResult(RESULT_OK);
+                    }
+                }else {
+                    /* En caso de que no se pueda modificar se notifica al usuario */
+                    Toast.makeText(this, "Para guardar cambios, antes activa la " +
+                            "opción modificar...", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+            case R.id.itemCancelarCambios:{
+                /* Cancela los cambios hechos en la actividad sobre el coche y devuelve a
+                 * los valores de la base de datos */
+                if (this.estaModificandose) {
+                    this.estaModificandose = false;
+                    this.cambiarEstadoModificar(false);
+                    this.rellenarElementos();
+                }else {
+                    Toast.makeText(this, "Para descartar cambios, antes activa la " +
+                            "opción modificar...", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+            case R.id.itemEliminar:{
+                /* Llama al Dialog para preguntar si es seguro que quiere borrar el coche */
+                DialogBorrarCoche dialog = new DialogBorrarCoche();
+                dialog.show(getSupportFragmentManager(), "dialogBorrarCoche");
+                return true;
+            }
+            case R.id.itemGenerarPresupuesto:{
+                /* Llama al Dialog para indicar que extras tiene el coche antes de generar
+                 * el presupuesto */
+                DialogAsignarExtras dialog = new DialogAsignarExtras();
+                dialog.show(getSupportFragmentManager(), "dialogExtras");
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
      * Comprueba que todos los elementos de la actividad estan rellenos
      *
-     * @return boolean
+     * @return true en caso de que todos los campos esten rellenos y false en caso contrario
      */
     private boolean comprobarCamposRellenos(){
         if (!this.edtDescripcion.getText().toString().isEmpty()){
@@ -150,129 +338,43 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
     }
 
     /**
-     * Método que se ejecuta cuando se pulsa en alguno de los item del menú
+     * Método que se ejecuta al pulsar sobre una de las opciones del dialog BorrarCoche
      *
-     * @param item
-     * @return
+     * @param seBorra :boolean
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.itemModificar:{
-                /* Cambia el estado de estaModificandose */
-                this.estaModificandose = !this.estaModificandose;
-                this.cambiarEstadoModificar(this.estaModificandose);
-                return true;
-            }
-            case R.id.itemGuardarCambios:{
-                /* Comprueba que se pueden modificar los campos del coche y lo modifica
-                 * es afirmativo */
-                if (this.estaModificandose) {
-                    if (this.comprobarCamposRellenos()) {
-                        this.estaModificandose = false;
-                        this.cambiarEstadoModificar(false);
-                        /* Se modifica y se envia un resultOk al main */
-                        this.modificarCoche();
-                        setResult(RESULT_OK);
-                    }
-                }else {
-                    Toast.makeText(this, "Para guardar cambios, antes activa la " +
-                            "opción modificar...", Toast.LENGTH_LONG).show();
-                }
-                return true;
-            }
-            case R.id.itemCancelarCambios:{
-                /* Cancela los cambios hechos en la actividad sobre el coche y devuelve a
-                 * los valores de la base de datos */
-                if (this.estaModificandose) {
-                    this.estaModificandose = false;
-                    this.cambiarEstadoModificar(false);
-                    this.rellenarElementos();
-                }else {
-                    Toast.makeText(this, "Para descartar cambios, antes activa la " +
-                            "opción modificar...", Toast.LENGTH_LONG).show();
-                }
-                return true;
-            }
-            case R.id.itemEliminar:{
-                /* Llama al Dialog para preguntar si es seguro que quiere borrar el coche */
-                DialogBorrarCoche dialog = new DialogBorrarCoche();
-                dialog.show(getSupportFragmentManager(), "dialogo");
-                return true;
-            }
-            case R.id.itemGenerarPresupuesto:{
-                DialogAsignarExtras dialog = new DialogAsignarExtras();
-                dialog.show(getSupportFragmentManager(), "dialogo extras");
-                return true;
-            }
+    public void onRespuestaBorrarCoche(boolean seBorra) {
+        if (seBorra){
+            /* En caso de quere borrarlo, se elimina, se notifica y se envia un
+             * resultOk y finaliza la actividad */
+            this.tablaCoches.eliminarCoche(this.coche);
+            Toast.makeText(this, "Borrado...", Toast.LENGTH_LONG).show();
+            setResult(RESULT_OK);
+            finish();
         }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
-     * Método que cambia el estado del menú
+     * Método que se ejecuta al volver del Dialog asignar Extras
      *
-     * @param menu
-     * @return
+     * @param listaExtras :ArrayList<Extra>
+     * @param aceptar :boolean
      */
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu){
-        menu.findItem(R.id.itemModificar).setEnabled(!estaModificandose);
-        menu.findItem(R.id.itemEliminar).setEnabled(!estaModificandose);
-        menu.findItem(R.id.itemGenerarPresupuesto).setEnabled(!estaModificandose);
-        return super.onPrepareOptionsMenu(menu);
-    }
+    public void onRespuestaAsignarExtras(ArrayList<Extra> listaExtras, boolean aceptar) {
+        if (aceptar){
+            /* En caso afirmativo se notifica que se está generando al usuario */
+            Toast.makeText(this, "Generando...", Toast.LENGTH_LONG).show();
 
-    /**
-     * Metodo para insertar el menú en el toolbar
-     *
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_detalles_coche_nuevo, menu);
-        return true;
-    }
-
-    /**
-     * Método que escribe el titulo del toolbar y lo muestra
-     */
-    private void iniciarToolbar(){
-        this.toolbar.setTitle("Detalles");
-        this.toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(this.toolbar);
-    }
-
-    /**
-     * Extrae del objeto coche todos los atributos para rellenar los elementos de la actividad
-     */
-    private void rellenarElementos(){
-        this.imageView.setImageBitmap(this.coche.getFoto());
-        this.edtDescripcion.setText(this.coche.getDescripcion());
-        this.edtMarca.setText(this.coche.getMarca());
-        this.edtPrecio.setText(String.valueOf(this.coche.getPrecio()));
-        this.edtModelo.setText(this.coche.getModelo());
-    }
-
-    /**
-     * Inicia los elementos de la actividad y los enlaza con el XML y los hace
-     * clickables
-     */
-    private void iniciarElementos() {
-        /* XML */
-        this.toolbar = (Toolbar) findViewById(R.id.toolbarAddCoches);
-        this.imageButtonFoto = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoFoto);
-        this.imageButtonGaleria = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoGaleria);
-        this.imageView = (ImageView) findViewById(R.id.imgvAddCochesNuevos);
-        this.edtModelo = (EditText) findViewById(R.id.edtModeloNuevo);
-        this.edtDescripcion = (EditText) findViewById(R.id.edtDescripcionNuevo);
-        this.edtPrecio = (EditText) findViewById(R.id.edtPrecioNuevo);
-        this.edtMarca = (EditText) findViewById(R.id.edtMarcaNuevo);
-
-        /* CLICKABLE */
-        this.imageButtonFoto.setOnClickListener(this);
-        this.imageButtonGaleria.setOnClickListener(this);
+            /* Se crea un presupuesto con el coche y los extras elegidos para pasarlo
+             * a la actividad VerPresupuestoCocheNuevo por bundle y se inicia la actividad */
+            Presupuesto presupuesto = new Presupuesto(this.coche, listaExtras);
+            Intent intent = new Intent(getApplicationContext(), VerPresupuestoCocheNuevoActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("presupuesto", presupuesto);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
     /**
@@ -290,84 +392,16 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
                     (checkSelfPermission(READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
                 /* En caso de no haber cargado correctamente los permisos se avisa con
                  * un Toast y se piden */
-                Toast.makeText(getApplicationContext(), "Error al cargar permisos", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error al cargar permisos",
+                        Toast.LENGTH_LONG).show();
                 requestPermissions(new String[]{CAMERA, WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 100);
                 return false;
             } else {
-                /* En caso de todos los permisos correctos se notifica */
-                Toast.makeText(getApplicationContext(), "Todos los permisos se han cargado correctamente", Toast.LENGTH_LONG).show();
+                /* En caso de todos los permisos correctos se notifica en el log */
+                Log.i("Mensaje", "Todos los permisos se han cargado correctamente.");
                 return true;
             }
         }
         return true;
-    }
-
-    /**
-     * Función que recoje un Bitmap y lo redimensiona
-     *
-     * @param source :Bitmap
-     * @return Bitmap
-     */
-    public Bitmap transform(Bitmap source) {
-        int sizeWidth = source.getWidth();
-        int sizeHeight = sizeWidth / 2 + 20;
-        int x = 0;
-        int y = 0;
-        Bitmap result = Bitmap.createBitmap(source, x, y, sizeWidth, sizeHeight);
-        return result;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            /* Recoge un un bitmap del ResultSet y lo carga al imageView */
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.getParcelable("data");
-            imageBitmap = transform(imageBitmap);
-            this.imageView.setImageBitmap(imageBitmap);
-        }
-        if (requestCode == REQUEST_IMAGE_GALERIA && resultCode == RESULT_OK){
-            /* Recoge la direccion donde se encuentra la imagen */
-            Uri uri = data.getData();
-            try {
-                /* Transforma el enlace en bitmap y lo carga a en el imageView */
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                bitmap = transform(bitmap);
-                this.imageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Método que se ejecuta al pulsar sobre una de las opciones del dialog BorrarCoche
-     *
-     * @param seBorra :boolean
-     */
-    @Override
-    public void onRespuestaBorrarCoche(boolean seBorra) {
-        if (seBorra){
-            /* En caso de quere borrarlo, se elimina, se notifica y se envia un
-             * resultOk y finaliza la actividad */
-            this.tablaCoches.eliminarCoche(this.coche);
-            Toast.makeText(this, "Borrado...", Toast.LENGTH_LONG).show();
-            setResult(RESULT_OK);
-            finish();
-        }
-    }
-
-    @Override
-    public void onRespuestaAsignarExtras(ArrayList<Extra> listaExtras, boolean aceptar) {
-        if (aceptar){
-            Toast.makeText(this, "Generando...", Toast.LENGTH_LONG).show();
-
-            Presupuesto presupuesto = new Presupuesto(this.coche, listaExtras);
-            Intent intent = new Intent(getApplicationContext(), VerPresupuestoCocheNuevoActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("presupuesto", presupuesto);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        }
     }
 }

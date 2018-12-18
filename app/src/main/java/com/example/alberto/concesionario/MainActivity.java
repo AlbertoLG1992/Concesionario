@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         this.floatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /* El FloatingActionButton cambia su uso dependiendo en que navigation este situado,
+                 * por este motivo se comprueba en que navigation se encuentra */
                 switch (navigationActual){
                     case "Coches Nuevos":{
                         /* Se habre la actividad de AddCochesNuevosActivity */
@@ -93,111 +95,121 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     /**
-     * Metodo que se ejecuta al pulsar normal sobre el listView
+     * Inicia los elementos de la actividad y los enlaza con el XML y los hace
+     * clickables
      */
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (this.navigationActual){
-            case "Coches Nuevos":{
-                /* Crea un intent para abrir la actividad DetalleCochesNuevos y envia el id
-                 * escogido */
-                Intent intent = new Intent(getApplicationContext(), DetalleCochesNuevosActivity.class);
-                intent.putExtra("id", (int)this.adapterCoches.getItemId(position));
-                startActivityForResult(intent, REQUEST_COCHE_NUEVO);
-                break;
-            }
-            case "Coches Usados":{
-                Intent intent = new Intent(getApplicationContext(), DetallesCochesUsadosActivity.class);
-                intent.putExtra("id", (int)this.adapterCoches.getItemId(position));
-                startActivityForResult(intent, REQUEST_COCHE_USADO);
-                break;
-            }
-        }
+    private void iniciarElementos(){
+        /* XML */
+        this.navigationMenu = (BottomNavigationView)findViewById(R.id.navigation);
+        this.toolbar = (Toolbar)findViewById(R.id.toolbarMain);
+        this.textView = (TextView) findViewById(R.id.textView);
+        this.listViewMain = (ListView) findViewById(R.id.listViewMain);
+        this.floatBtn = (FloatingActionButton) findViewById(R.id.floatBtnMain);
+
+        /* CLICKABLES */
+        this.navigationMenu.setOnNavigationItemSelectedListener(this);
+        this.listViewMain.setOnItemClickListener(this);
+        this.listViewMain.setOnItemLongClickListener(this);
     }
 
     /**
-     * Método que se ejecuta al pulsar en longClick sobre el listView
+     * Método que escribe el titulo del toolbar y lo muestra
      */
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        if (this.navigationActual.equals("Extras")){
-            this.extraBorrar = (Extra)this.adapterExtra.getItem(position);
-            DialogBorrarCoche dialog = new DialogBorrarCoche();
-            dialog.setQueBorrar("extra");
-            dialog.show(getSupportFragmentManager(), "Dialogo");
-            return true;
-        }
-        return false;
+    private void iniciarToolbar(){
+        this.toolbar.setTitle("Concesionario");
+        this.toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(this.toolbar);
     }
 
     /**
-     * Método que se ejecuta al volver del dialogBorrarCoche
+     * Metodo para insertar el menú en el toolbar
      *
-     * @param seBorra :boolean
+     * @param menu :Menu
+     * @return boolean
      */
     @Override
-    public void onRespuestaBorrarCoche(boolean seBorra) {
-        if (seBorra){
-            /* Si se pulsa que se quiere borrar en primer lugar es necesario comprobar que
-             * no existan dependencias en los coches usados, en caso de que no existan dependencias
-             * se borra sin problema */
-            TablaExtras tablaExtras = new TablaExtras(getApplicationContext());
-            if (!tablaExtras.existenDependencias(this.extraBorrar)){
-                tablaExtras.eliminarExtra(this.extraBorrar);
-                Toast.makeText(this, "Borrado...", Toast.LENGTH_LONG).show();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    /**
+     * Método que se ejecuta cuando se pulsa en alguno de los item del menú
+     *
+     * @param item :MenuItem
+     * @return boolean
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.itemCochesNuevos:{
+                /* Activa el item de Coche Nuevos en navigationMenu */
+                this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
+                break;
+            }
+            case R.id.itemCochesUsados:{
+                /* Activa el item de Coche Usados en navigationMenu */
+                this.navigationMenu.setSelectedItemId(R.id.navigationCochesUsados);
+                break;
+            }
+            case R.id.itemExtras:{
+                /* Activa el item de Extras en navigationMenu */
                 this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
-            }else{
-                Toast.makeText(this, "No se puede borrar, existen dependencias",
-                        Toast.LENGTH_LONG).show();
+                break;
+            }
+            case R.id.itemVerUbicación:{
+                /* Abre la actividad MapsActivity */
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
+                break;
             }
         }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
-     * Método iniciado al volver de DialogAddExtra
+     * Método que cambia el estado del menú
      *
-     * @param aceptar :boolean
-     * @param extra :Extra
+     * @param menu :Menu
+     * @return boolean
      */
     @Override
-    public void onRespuestaAddExtras(boolean aceptar, Extra extra) {
-        if (aceptar){
-            /* Se abre la base de datos en la tabla de extras y se añade el extra devuelto por
-             * el dialog, despues se recarga de nuevo el listView */
-            TablaExtras tablaExtras = new TablaExtras(this);
-            tablaExtras.addExtra(extra);
-            this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
+    public boolean onPrepareOptionsMenu(Menu menu){
+        /* Item Coche Nuevos */
+        if (this.navigationActual.equals("Coches Nuevos")){
+            menu.findItem(R.id.itemCochesNuevos).setEnabled(false);
         }else {
-            Toast.makeText(this, "Error, todos los campos tienen que ir rellenos",
-                    Toast.LENGTH_LONG).show();
+            menu.findItem(R.id.itemCochesNuevos).setEnabled(true);
         }
-    }
 
-    /**
-     * Método iniciado al volver de una actividad iniciada con ActivityForResult
-     *
-     * @param requestCode :int
-     * @param resultCode :int
-     * @param data :Intent
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((requestCode == REQUEST_COCHE_NUEVO) && (resultCode == RESULT_OK)){
-            this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
+        /* Item Coche Usados */
+        if (this.navigationActual.equals("Coches Usados")){
+            menu.findItem(R.id.itemCochesUsados).setEnabled(false);
+        }else {
+            menu.findItem(R.id.itemCochesUsados).setEnabled(true);
         }
-        if ((requestCode == REQUEST_COCHE_USADO) && (resultCode == RESULT_OK)){
-            this.navigationMenu.setSelectedItemId(R.id.navigationCochesUsados);
+
+        /* Item Extras */
+        if (this.navigationActual.equals("Extras")){
+            menu.findItem(R.id.itemExtras).setEnabled(false);
+        }else {
+            menu.findItem(R.id.itemExtras).setEnabled(true);
         }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     /**
      * Método iniciado al pulsar sobre un elemento del BottomNavigationView
      *
-     * @param menuItem
-     * @return
+     * @param menuItem :MenuItem
+     * @return boolean
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        /* Cada vez que se pulsa sobre un item se indica en el string navigationActual el
+         * navigation en el cual se encuentra y se muestra en el textView de la actividad,
+         * despues se carga el adaptador correspondiente */
         switch (menuItem.getItemId()){
             case R.id.navigationCochesNuevos:{
                 this.navigationActual = "Coches Nuevos";
@@ -247,106 +259,106 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     /**
-     * Método que cambia el estado del menú
-     *
-     * @param menu
-     * @return
+     * Metodo que se ejecuta al pulsar normal sobre el listView
      */
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu){
-        /* Item Coche Nuevos */
-        if (this.navigationActual.equals("Coches Nuevos")){
-            menu.findItem(R.id.itemCochesNuevos).setEnabled(false);
-        }else {
-            menu.findItem(R.id.itemCochesNuevos).setEnabled(true);
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        switch (this.navigationActual){
+            case "Coches Nuevos":{
+                /* Crea un intent para abrir la actividad DetalleCochesNuevos y envia el id
+                 * escogido a dicha actividad */
+                Intent intent = new Intent(getApplicationContext(), DetalleCochesNuevosActivity.class);
+                intent.putExtra("id", (int)this.adapterCoches.getItemId(position));
+                startActivityForResult(intent, REQUEST_COCHE_NUEVO);
+                break;
+            }
+            case "Coches Usados":{
+                /* Crea un intent para abrir la actividad DetallesCochesUsados y envia el id
+                 * escogido a dicha actividad */
+                Intent intent = new Intent(getApplicationContext(), DetallesCochesUsadosActivity.class);
+                intent.putExtra("id", (int)this.adapterCoches.getItemId(position));
+                startActivityForResult(intent, REQUEST_COCHE_USADO);
+                break;
+            }
         }
+    }
 
-        /* Item Coche Usados */
-        if (this.navigationActual.equals("Coches Usados")){
-            menu.findItem(R.id.itemCochesUsados).setEnabled(false);
-        }else {
-            menu.findItem(R.id.itemCochesUsados).setEnabled(true);
+    /**
+     * Método iniciado al volver de una actividad iniciada con ActivityForResult
+     *
+     * @param requestCode :int
+     * @param resultCode :int
+     * @param data :Intent
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /* Se comprueba que haya vuelto correctamente y en caso afirmativo se carga su
+         * adaptador pulsando en el navigation que corresponda */
+        if ((requestCode == REQUEST_COCHE_NUEVO) && (resultCode == RESULT_OK)){
+            this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
         }
+        if ((requestCode == REQUEST_COCHE_USADO) && (resultCode == RESULT_OK)){
+            this.navigationMenu.setSelectedItemId(R.id.navigationCochesUsados);
+        }
+    }
 
-        /* Item Extras */
+    /**
+     * Método que se ejecuta al pulsar en longClick sobre el listView
+     */
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        /* Desde el ItemLongClick solo se pueden borrar los extras, por lo que
+         * se comprueba que sea uno, en caso afirmativo se crea un Dialog para confirmación */
         if (this.navigationActual.equals("Extras")){
-            menu.findItem(R.id.itemExtras).setEnabled(false);
-        }else {
-            menu.findItem(R.id.itemExtras).setEnabled(true);
+            this.extraBorrar = (Extra)this.adapterExtra.getItem(position);
+            DialogBorrarCoche dialog = new DialogBorrarCoche();
+            dialog.setQueBorrar("extra");
+            dialog.show(getSupportFragmentManager(), "DialogBorrarCoche");
+            return true;
         }
-
-        return super.onPrepareOptionsMenu(menu);
+        return false;
     }
 
     /**
-     * Método que se ejecuta cuando se pulsa en alguno de los item del menú
+     * Método que se ejecuta al volver del dialogBorrarCoche
      *
-     * @param item
-     * @return
+     * @param seBorra :boolean
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.itemCochesNuevos:{
-                /* Activa el item de Coche Nuevos en navigationMenu */
-                this.navigationMenu.setSelectedItemId(R.id.navigationCochesNuevos);
-                break;
-            }
-            case R.id.itemCochesUsados:{
-                /* Activa el item de Coche Usados en navigationMenu */
-                this.navigationMenu.setSelectedItemId(R.id.navigationCochesUsados);
-                break;
-            }
-            case R.id.itemExtras:{
-                /* Activa el item de Extras en navigationMenu */
+    public void onRespuestaBorrarCoche(boolean seBorra) {
+        if (seBorra){
+            /* Si se pulsa que se quiere borrar en primer lugar es necesario comprobar que
+             * no existan dependencias en los coches usados, en caso de que no existan dependencias
+             * se borra sin problema */
+            TablaExtras tablaExtras = new TablaExtras(getApplicationContext());
+            if (!tablaExtras.existenDependencias(this.extraBorrar)){
+                tablaExtras.eliminarExtra(this.extraBorrar);
+                Toast.makeText(this, "Borrado...", Toast.LENGTH_LONG).show();
                 this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
-                break;
-            }
-            case R.id.itemVerUbicación:{
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                startActivity(intent);
-                break;
+            }else{
+                Toast.makeText(this, "No se puede borrar, existen dependencias",
+                        Toast.LENGTH_LONG).show();
             }
         }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
-     * Metodo para insertar el menú en el toolbar
+     * Método iniciado al volver de DialogAddExtra
      *
-     * @param menu
-     * @return
+     * @param aceptar :boolean
+     * @param extra :Extra
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    /**
-     * Método que escribe el titulo del toolbar y lo muestra
-     */
-    private void iniciarToolbar(){
-        this.toolbar.setTitle("Concesionario");
-        this.toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(this.toolbar);
-    }
-
-    /**
-     * Inicia los elementos de la actividad y los enlaza con el XML y los hace
-     * clickables
-     */
-    private void iniciarElementos(){
-        /* XML */
-        this.navigationMenu = (BottomNavigationView)findViewById(R.id.navigation);
-        this.toolbar = (Toolbar)findViewById(R.id.toolbarMain);
-        this.textView = (TextView) findViewById(R.id.textView);
-        this.listViewMain = (ListView) findViewById(R.id.listViewMain);
-        this.floatBtn = (FloatingActionButton) findViewById(R.id.floatBtnMain);
-
-        /* CLICKABLES */
-        this.navigationMenu.setOnNavigationItemSelectedListener(this);
-        this.listViewMain.setOnItemClickListener(this);
-        this.listViewMain.setOnItemLongClickListener(this);
+    public void onRespuestaAddExtras(boolean aceptar, Extra extra) {
+        if (aceptar){
+            /* Se abre la base de datos en la tabla de extras y se añade el extra devuelto por
+             * el dialog, despues se recarga de nuevo el listView */
+            TablaExtras tablaExtras = new TablaExtras(this);
+            tablaExtras.addExtra(extra);
+            this.navigationMenu.setSelectedItemId(R.id.navigationExtras);
+        }else {
+            Toast.makeText(this, "Error, todos los campos tienen que ir rellenos",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }

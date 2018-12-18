@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +58,52 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
         this.iniciarToolbar();
     }
 
+    /**
+     * Inicia los elementos de la actividad y los enlaza con el XML y los hace
+     * clickables
+     */
+    private void iniciarElementos(){
+        /* XML */
+        this.toolbar = (Toolbar)findViewById(R.id.toolbarAddCoches);
+        this.imageButtonFoto = (ImageButton)findViewById(R.id.imgBtnAddCocheNuevoFoto);
+        this.imageButtonGaleria = (ImageButton)findViewById(R.id.imgBtnAddCocheNuevoGaleria);
+        this.imageView = (ImageView)findViewById(R.id.imgvAddCochesNuevos);
+        this.edtModeloNuevo = (EditText)findViewById(R.id.edtModeloNuevo);
+        this.edtDescripcionNuevo = (EditText)findViewById(R.id.edtDescripcionNuevo);
+        this.edtPrecioNuevo = (EditText)findViewById(R.id.edtPrecioNuevo);
+        this.edtMarcaNuevo = (EditText)findViewById(R.id.edtMarcaNuevo);
+
+        /* CLICKABLE */
+        this.imageButtonFoto.setOnClickListener(this);
+        this.imageButtonGaleria.setOnClickListener(this);
+    }
+
+    /**
+     * Método que escribe el titulo del toolbar y lo muestra
+     */
+    private void iniciarToolbar(){
+        this.toolbar.setTitle("Añade un coche nuevo");
+        this.toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(this.toolbar);
+    }
+
+    /**
+     * Metodo para insertar el menú en el toolbar
+     *
+     * @param menu :Menu
+     * @return boolean
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_coche_nuevo, menu);
+        return true;
+    }
+
+    /**
+     * Método que se activa al pulsar sobre un objeto clickable de la actividad
+     *
+     * @param v :View
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -78,17 +125,24 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
                 break;
             }
         }
-
-
     }
 
+    /**
+     * Método que se activa cuando vuelve desde una Actividad que se inicio con
+     * startActivityForResult de forma correcta
+     *
+     * @param requestCode :int
+     * @param resultCode :int
+     * @param data :Intent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            /* Recoge un un bitmap del ResultSet y lo carga al imageView */
+            /* Vuelve desde capturar foto, recoge un un bitmap con la foto del ResultSet y
+             * lo pasa por una función para redimensionarlo antes de cargarlo al imageView */
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.getParcelable("data");
-            imageBitmap = transform(imageBitmap);
+            imageBitmap = redimensionar(imageBitmap);
             this.imageView.setImageBitmap(imageBitmap);
             this.cambiaFoto = true;
         }
@@ -96,9 +150,10 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
             /* Recoge la direccion donde se encuentra la imagen */
             Uri uri = data.getData();
             try {
-                /* Transforma el enlace en bitmap y lo carga a en el imageView */
+                /* Recoge del enlace un bitmap y lo redimensiona antes de cargarlo
+                 * en el imageView */
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                bitmap = transform(bitmap);
+                bitmap = redimensionar(bitmap);
                 this.imageView.setImageBitmap(bitmap);
                 this.cambiaFoto = true;
             } catch (IOException e) {
@@ -107,27 +162,25 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
         }
     }
 
-
     /**
      * Función que recoje un Bitmap y lo redimensiona
      *
-     * @param source
-     * @return
+     * @param source :Bitmap
+     * @return Bitmap
      */
-    public Bitmap transform(Bitmap source) {
+    private Bitmap redimensionar(Bitmap source) {
         int sizeWidth = source.getWidth();
         int sizeHeight = sizeWidth / 2 + 20;
         int x = 0;
         int y = 0;
-        Bitmap result = Bitmap.createBitmap(source, x, y, sizeWidth, sizeHeight);
-        return result;
+        return Bitmap.createBitmap(source, x, y, sizeWidth, sizeHeight);
     }
 
     /**
      * Método que se ejecuta cuando se pulsa en alguno de los item del menú
      *
-     * @param item
-     * @return
+     * @param item :MenuItem
+     * @return boolean
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -141,12 +194,14 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
                             this.edtDescripcionNuevo.getText().toString(),
                             ((BitmapDrawable)this.imageView.getDrawable()).getBitmap(),
                             true);
+
                     /* Se abre la base de datos y se inserta en ella el coche nuevo */
                     TablaCoches tablaCoches = new TablaCoches(this);
                     tablaCoches.addCoche(coche);
 
                     /* Se notifica que el coche se ha añadido correctamente */
-                    Toast.makeText(this, "Coche añadido correctamente", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Coche añadido correctamente",
+                            Toast.LENGTH_LONG).show();
 
                     /* Se envia a MainActivity un RESULT_OK y se cierra actividad */
                     setResult(RESULT_OK);
@@ -170,7 +225,8 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
 
     /**
      * Comprueba que la foto ha sido cambiada y todos los campos estan rellenos
-     * @return
+     *
+     * @return true en caso de que todos los campos esten rellenos y false en caso contrario
      */
     private boolean checkDatosRellenos(){
         if (!this.edtModeloNuevo.getText().toString().isEmpty()){
@@ -187,7 +243,8 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
                 }
             }
         }
-        Toast.makeText(this, "Todos los campos tienen que estar rellenos", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Todos los campos tienen que estar rellenos",
+                Toast.LENGTH_LONG).show();
         return false;
     }
 
@@ -206,56 +263,16 @@ public class AddCochesNuevosActivity extends AppCompatActivity implements View.O
                     (checkSelfPermission(READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
                 /* En caso de no haber cargado correctamente los permisos se avisa con
                  * un Toast y se piden */
-                Toast.makeText(getApplicationContext(), "Error al cargar permisos", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Error al cargar permisos",
+                        Toast.LENGTH_LONG).show();
                 requestPermissions(new String[]{CAMERA, WRITE_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE}, 100);
                 return false;
             } else {
-                /* En caso de todos los permisos correctos se notifica */
-                Toast.makeText(getApplicationContext(), "Todos los permisos se han cargado correctamente", Toast.LENGTH_LONG).show();
+                /* En caso de todos los permisos correctos se notifica en el log */
+                Log.i("Mensaje", "Todos los permisos se han cargado correctamente.");
                 return true;
             }
         }
         return true;
-    }
-
-    /**
-     * Metodo para insertar el menú en el toolbar
-     *
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_coche_nuevo, menu);
-        return true;
-    }
-
-    /**
-     * Método que escribe el titulo del toolbar y lo muestra
-     */
-    private void iniciarToolbar(){
-        this.toolbar.setTitle("Añade un coche nuevo");
-        this.toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(this.toolbar);
-    }
-
-    /**
-     * Inicia los elementos de la actividad y los enlaza con el XML y los hace
-     * clickables
-     */
-    private void iniciarElementos(){
-        /* XML */
-        this.toolbar = (Toolbar)findViewById(R.id.toolbarAddCoches);
-        this.imageButtonFoto = (ImageButton)findViewById(R.id.imgBtnAddCocheNuevoFoto);
-        this.imageButtonGaleria = (ImageButton)findViewById(R.id.imgBtnAddCocheNuevoGaleria);
-        this.imageView = (ImageView)findViewById(R.id.imgvAddCochesNuevos);
-        this.edtModeloNuevo = (EditText)findViewById(R.id.edtModeloNuevo);
-        this.edtDescripcionNuevo = (EditText)findViewById(R.id.edtDescripcionNuevo);
-        this.edtPrecioNuevo = (EditText)findViewById(R.id.edtPrecioNuevo);
-        this.edtMarcaNuevo = (EditText)findViewById(R.id.edtMarcaNuevo);
-
-        /* CLICKABLE */
-        this.imageButtonFoto.setOnClickListener(this);
-        this.imageButtonGaleria.setOnClickListener(this);
     }
 }
