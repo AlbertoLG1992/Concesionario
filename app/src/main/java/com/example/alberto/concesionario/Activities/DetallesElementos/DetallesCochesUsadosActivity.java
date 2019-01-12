@@ -59,6 +59,42 @@ public class DetallesCochesUsadosActivity extends AppCompatActivity implements D
     }
 
     /**
+     * Inicia los elementos de la actividad y lo senlaza con el XML
+     */
+    private void iniciarElementos() {
+        /* XML */
+        this.toolbar = (Toolbar) findViewById(R.id.toolbarAddCoches);
+        this.imageButtonFoto = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoFoto);
+        this.imageButtonGaleria = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoGaleria);
+        this.imageView = (ImageView) findViewById(R.id.imgvAddCochesNuevos);
+        this.edtModelo = (EditText) findViewById(R.id.edtModeloNuevo);
+        this.edtDescripcion = (EditText) findViewById(R.id.edtDescripcionNuevo);
+        this.edtPrecio = (EditText) findViewById(R.id.edtPrecioNuevo);
+        this.edtMarca = (EditText) findViewById(R.id.edtMarcaNuevo);
+    }
+
+    /**
+     * Método que escribe el titulo del toolbar y lo muestra
+     */
+    private void iniciarToolbar(){
+        this.toolbar.setTitle("Detalles");
+        this.toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(this.toolbar);
+    }
+
+    /**
+     * Metodo para insertar el menú en el toolbar
+     *
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detalle_coche_usado, menu);
+        return true;
+    }
+
+    /**
      * Rellena los campos con el coche extraido
      */
     private void rellenarElementos() {
@@ -67,6 +103,18 @@ public class DetallesCochesUsadosActivity extends AppCompatActivity implements D
         this.edtMarca.setText(this.coche.getMarca());
         this.edtPrecio.setText(String.valueOf(this.coche.getPrecio()));
         this.edtModelo.setText(this.coche.getModelo());
+    }
+
+    /**
+     * Desactiva todos los campos para evitar que se modifiquen
+     */
+    private void desactivarCampos() {
+        this.edtModelo.setEnabled(false);
+        this.edtPrecio.setEnabled(false);
+        this.edtMarca.setEnabled(false);
+        this.edtDescripcion.setEnabled(false);
+        this.imageButtonFoto.setVisibility(View.GONE);
+        this.imageButtonGaleria.setVisibility(View.GONE);
     }
 
     /**
@@ -133,54 +181,6 @@ public class DetallesCochesUsadosActivity extends AppCompatActivity implements D
 
         intent.setType("*/*");
         startActivity(intent);
-    }
-
-    /**
-     * Desactiva todos los campos para evitar que se modifiquen
-     */
-    private void desactivarCampos() {
-        this.edtModelo.setEnabled(false);
-        this.edtPrecio.setEnabled(false);
-        this.edtMarca.setEnabled(false);
-        this.edtDescripcion.setEnabled(false);
-        this.imageButtonFoto.setVisibility(View.GONE);
-        this.imageButtonGaleria.setVisibility(View.GONE);
-    }
-
-    /**
-     * Metodo para insertar el menú en el toolbar
-     *
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_detalle_coche_usado, menu);
-        return true;
-    }
-
-    /**
-     * Método que escribe el titulo del toolbar y lo muestra
-     */
-    private void iniciarToolbar(){
-        this.toolbar.setTitle("Detalles");
-        this.toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(this.toolbar);
-    }
-
-    /**
-     * Inicia los elementos de la actividad y lo senlaza con el XML
-     */
-    private void iniciarElementos() {
-        /* XML */
-        this.toolbar = (Toolbar) findViewById(R.id.toolbarAddCoches);
-        this.imageButtonFoto = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoFoto);
-        this.imageButtonGaleria = (ImageButton) findViewById(R.id.imgBtnAddCocheNuevoGaleria);
-        this.imageView = (ImageView) findViewById(R.id.imgvAddCochesNuevos);
-        this.edtModelo = (EditText) findViewById(R.id.edtModeloNuevo);
-        this.edtDescripcion = (EditText) findViewById(R.id.edtDescripcionNuevo);
-        this.edtPrecio = (EditText) findViewById(R.id.edtPrecioNuevo);
-        this.edtMarca = (EditText) findViewById(R.id.edtMarcaNuevo);
     }
 
     @Override

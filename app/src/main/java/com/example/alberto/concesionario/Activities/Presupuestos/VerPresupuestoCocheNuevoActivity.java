@@ -63,13 +63,15 @@ public class VerPresupuestoCocheNuevoActivity extends AppCompatActivity implemen
         });
     }
 
-    private void cargarPdf(){
-        //File file = new File(this.pdf.viewPDF());
-        pdfView.fromFile(new File(this.pdf.verPathPDF()))
-                .enableSwipe(true)
-                .enableDoubletap(true)
-                .enableAntialiasing(true)
-                .load();
+    /**
+     * Se enlazan los elementos de la actividad con el XML
+     */
+    private void iniciarElementos(){
+        this.pdfView = (PDFView) findViewById(R.id.visorPdf);
+        this.btnRecargar = (Button)findViewById(R.id.btnRecargar);
+        this.floatButton = (FloatingActionButton)findViewById(R.id.floatingActionButton);
+
+        this.btnRecargar.setOnClickListener(this);
     }
 
     /**
@@ -98,6 +100,15 @@ public class VerPresupuestoCocheNuevoActivity extends AppCompatActivity implemen
              * para recargar */
             this.btnRecargar.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void cargarPdf(){
+        //File file = new File(this.pdf.viewPDF());
+        pdfView.fromFile(new File(this.pdf.verPathPDF()))
+                .enableSwipe(true)
+                .enableDoubletap(true)
+                .enableAntialiasing(true)
+                .load();
     }
 
     /**
@@ -164,16 +175,5 @@ public class VerPresupuestoCocheNuevoActivity extends AppCompatActivity implemen
             }
         }
         return true;
-    }
-
-    /**
-     * Se enlazan los elementos de la actividad con el XML
-     */
-    private void iniciarElementos(){
-        this.pdfView = (PDFView) findViewById(R.id.visorPdf);
-        this.btnRecargar = (Button)findViewById(R.id.btnRecargar);
-        this.floatButton = (FloatingActionButton)findViewById(R.id.floatingActionButton);
-
-        this.btnRecargar.setOnClickListener(this);
     }
 }

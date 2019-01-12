@@ -104,17 +104,6 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
     }
 
     /**
-     * Extrae del objeto coche todos los atributos para rellenar los elementos de la actividad
-     */
-    private void rellenarElementos(){
-        this.imageView.setImageBitmap(this.coche.getFoto());
-        this.edtDescripcion.setText(this.coche.getDescripcion());
-        this.edtMarca.setText(this.coche.getMarca());
-        this.edtPrecio.setText(String.valueOf(this.coche.getPrecio()));
-        this.edtModelo.setText(this.coche.getModelo());
-    }
-
-    /**
      * Metodo para insertar el menú en el toolbar
      *
      * @param menu :Menu
@@ -124,6 +113,17 @@ public class DetalleCochesNuevosActivity extends AppCompatActivity implements Vi
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detalles_coche_nuevo, menu);
         return true;
+    }
+
+    /**
+     * Extrae del objeto coche todos los atributos para rellenar los elementos de la actividad
+     */
+    private void rellenarElementos(){
+        this.imageView.setImageBitmap(this.coche.getFoto());
+        this.edtDescripcion.setText(this.coche.getDescripcion());
+        this.edtMarca.setText(this.coche.getMarca());
+        this.edtPrecio.setText(String.valueOf(this.coche.getPrecio()));
+        this.edtModelo.setText(this.coche.getModelo());
     }
 
     /**
